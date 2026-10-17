@@ -12,6 +12,7 @@ dist/
 build/
 *.egg
 .venv/
+.venv_audit/
 venv/
 .env
 .env.*

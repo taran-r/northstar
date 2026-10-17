@@ -206,15 +206,26 @@ def generate_dataset(cfg: GenerateConfig) -> dict:
 
     pbar.close()
 
-    # Splits
-    rng.shuffle(sample_names)
-    n = len(sample_names)
-    n_train = int(n * cfg.train_fraction)
-    n_val = int(n * cfg.val_fraction)
+    # Splits by scenario (no window from the same scenario across splits)
+    from collections import defaultdict
+
+    by_scenario: dict[str, list[str]] = defaultdict(list)
+    for fname in sample_names:
+        # scn_00000_m0_w0000.npz -> scn_00000
+        sid = fname.split("_m")[0]
+        by_scenario[sid].append(fname)
+    scenarios = list(by_scenario.keys())
+    rng.shuffle(scenarios)
+    n_scen = len(scenarios)
+    n_train_s = int(n_scen * cfg.train_fraction)
+    n_val_s = int(n_scen * cfg.val_fraction)
+    train_s = scenarios[:n_train_s]
+    val_s = scenarios[n_train_s : n_train_s + n_val_s]
+    test_s = scenarios[n_train_s + n_val_s :]
     splits = {
-        "train": sample_names[:n_train],
-        "val": sample_names[n_train : n_train + n_val],
-        "test": sample_names[n_train + n_val :],
+        "train": sorted(f for s in train_s for f in by_scenario[s]),
+        "val": sorted(f for s in val_s for f in by_scenario[s]),
+        "test": sorted(f for s in test_s for f in by_scenario[s]),
     }
     for name, files in splits.items():
         with open(split_dir / f"{name}.json", "w", encoding="utf-8") as f:
@@ -261,6 +272,17 @@ def generate_dataset(cfg: GenerateConfig) -> dict:
         "elapsed_sec": time.time() - t0,
         "config": asdict(cfg),
         "splits": {k: len(v) for k, v in splits.items()},
+        "split_policy": {
+            "type": "scenario",
+            "train_fraction": cfg.train_fraction,
+            "val_fraction": cfg.val_fraction,
+            "n_scenarios": {
+                "train": len(train_s),
+                "val": len(val_s),
+                "test": len(test_s),
+            },
+            "note": "Windows from the same scenario_id never cross splits.",
+        },
     }
     with open(out / "dataset_meta.json", "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)

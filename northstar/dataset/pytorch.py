@@ -22,6 +22,14 @@ import torch
 from torch.utils.data import Dataset
 
 
+def _wrap_angle(yaw: float) -> float:
+    return float((yaw + np.pi) % (2.0 * np.pi) - np.pi)
+
+
+def _wrap_angle_torch(yaw: torch.Tensor) -> torch.Tensor:
+    return (yaw + np.pi) % (2.0 * np.pi) - np.pi
+
+
 class NorthstarTrajectoryDataset(Dataset):
     def __init__(
         self,
@@ -61,26 +69,32 @@ class NorthstarTrajectoryDataset(Dataset):
             with open(sidecar, "r", encoding="utf-8") as f:
                 info = json.load(f)
 
-        future = torch.from_numpy(np.asarray(data["future"], dtype=np.float32))
+        future = torch.from_numpy(np.asarray(data["future"], dtype=np.float32).copy())
+        # Wrap headings into (-pi, pi] (some stored windows slightly exceed ±pi)
+        future[:, 2] = _wrap_angle_torch(future[:, 2])
         ego0 = torch.tensor(
             [
                 info["ego0"]["x"],
                 info["ego0"]["z"],
-                info["ego0"]["yaw"],
+                _wrap_angle(float(info["ego0"]["yaw"])),
                 info["ego0"]["speed"],
                 info["ego0"]["steering"],
             ],
             dtype=torch.float32,
         )
         subgoal = torch.tensor(
-            [info["subgoal"]["x"], info["subgoal"]["z"], info["subgoal"]["yaw"]],
+            [
+                info["subgoal"]["x"],
+                info["subgoal"]["z"],
+                _wrap_angle(float(info["subgoal"]["yaw"])),
+            ],
             dtype=torch.float32,
         )
         global_goal = torch.tensor(
             [
                 info["global_goal"]["x"],
                 info["global_goal"]["z"],
-                info["global_goal"]["yaw"],
+                _wrap_angle(float(info["global_goal"]["yaw"])),
             ],
             dtype=torch.float32,
         )
