@@ -18,7 +18,11 @@ python scripts/generate_dataset.py --out data/dataset_v1 --n-scenarios 360 --min
 python scripts/validate_dataset.py --root data/dataset_v1
 ```
 
-A validated corpus is already at `data/dataset_v1` (**5021** windows).
+A validated corpus is already at `data/dataset_v1` (**5021** windows). Treat it as **immutable** for the training teammate — see [`docs/TRAINING_HANDOFF.md`](docs/TRAINING_HANDOFF.md).
+
+```bash
+python -m pytest tests/test_dataset_loader.py -q
+```
 
 ## Repository layout
 

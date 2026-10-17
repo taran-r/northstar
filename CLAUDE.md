@@ -34,7 +34,14 @@ Not a drone, not 2D pathfinding, not A* with an AI wrapper.
 
 ## Commands
 
-TBD. Fill these in as soon as the skeleton runs (install, run backend, run frontend, test, train, benchmark).
+```bash
+pip install -e .
+python -m pytest tests/test_dataset_loader.py -q
+# Data owner only (do not overwrite data/dataset_v1 from training work):
+# python scripts/generate_dataset.py --out data/dataset_v1 --min-windows 5000
+```
+
+Training handoff: `docs/TRAINING_HANDOFF.md`. Dataset coords are XZ-horizontal (see `northstar/coords.py` for backend/Three.js mapping).
 
 ## Working agreements
 

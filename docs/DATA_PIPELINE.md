@@ -125,9 +125,15 @@ Advance a scenario by updating `ScenarioSpec.start` (and optionally truncating d
 
 ## Generated dataset (`data/dataset_v1`)
 
-Current build: **5021** windows from **363** scenarios (train/val/test = 4016/502/503). Target is `--min-windows 5000`.
+Current build: **5021** windows from **363** scenarios. Splits are by **scenario** (see `dataset_meta.json` → `split_policy`). Target generation flag: `--min-windows 5000`.
 
-The `data/` directory is tracked in git for teammate handoff (~60 MB). Re-ignore or move to Git LFS if it grows much larger.
+**`data/dataset_v1` is the immutable initial corpus** for training handoff. Do not overwrite it; see `docs/TRAINING_HANDOFF.md`.
+
+The `data/` directory is tracked in git (~60 MB). Ordinary Git is fine at this size; move to Git LFS if the corpus grows much larger.
+
+### Subgoal leakage note
+
+When the global goal lies beyond the 6.4 s window, `subgoal` is set to the **expert window endpoint** (`is_local=1`). That is convenient for training but is **not** automatically available at inference unless the live stack supplies an equivalent local goal. Prefer `global_goal` + maps as primary conditioning, or define a reproducible subgoal policy.
 
 ## Commands
 
