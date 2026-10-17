@@ -30,6 +30,7 @@ class HybridAStarConfig:
     goal_xy_tol: float = 0.75
     goal_yaw_tol: float = math.radians(40.0)
     heuristic_weight: float = 1.2
+    record_substeps: bool = False
 
 
 class HybridAStar:
@@ -69,6 +70,7 @@ class HybridAStar:
         g_score: dict[tuple[int, int, int], float] = {}
         parents: dict[int, Optional[int]] = {}
         states: list[VehicleState] = []
+        edge_samples: dict[int, list[VehicleState]] = {}
 
         start_s = start.copy()
         states.append(start_s)
@@ -105,7 +107,7 @@ class HybridAStar:
                 for speed in c.speeds:
                     ns = s.copy()
                     ok = True
-                    accel = 0.0
+                    samples: list[VehicleState] = []
                     for _ in range(c.steps_per_motion):
                         accel = float(
                             np.clip(
@@ -120,6 +122,8 @@ class HybridAStar:
                         if self.collision.collides_static(ns):
                             ok = False
                             break
+                        if c.record_substeps:
+                            samples.append(ns.copy())
                     if not ok:
                         continue
 
@@ -132,6 +136,8 @@ class HybridAStar:
                     new_id = len(states)
                     states.append(ns)
                     parents[new_id] = nid
+                    if c.record_substeps:
+                        edge_samples[new_id] = samples
                     g_score[nkey] = tentative
                     f = tentative + c.heuristic_weight * self._heuristic(ns, goal)
                     heapq.heappush(open_heap, (f, new_id))
@@ -145,4 +151,9 @@ class HybridAStar:
             path_ids.append(cur)
             cur = parents[cur]
         path_ids.reverse()
-        return [states[i].copy() for i in path_ids]
+        if not c.record_substeps:
+            return [states[i].copy() for i in path_ids]
+        dense: list[VehicleState] = [states[path_ids[0]].copy()]
+        for pid in path_ids[1:]:
+            dense.extend(sample.copy() for sample in edge_samples.get(pid, [states[pid]]))
+        return dense

@@ -200,6 +200,65 @@ def plan_expert_trajectory(
     )
 
 
+def plan_static_path(
+    facility: FacilitySpec,
+    scenario: ScenarioSpec,
+    vehicle_params: Optional[VehicleParams] = None,
+    dt: float = 0.2,
+    cruise_scale: float = 0.85,
+) -> Optional[list[VehicleState]]:
+    """Static Hybrid A* path with every bicycle substep stored. No dynamic reaction."""
+    vehicle_params = vehicle_params or VehicleParams()
+    model = BicycleModel(vehicle_params)
+    occ = build_facility_occupancy(
+        facility, resolution=0.25, static_obstacles=scenario.static_obstacles
+    )
+    collision = CollisionChecker(
+        facility,
+        static_obstacles=scenario.static_obstacles,
+        occupancy=occ,
+        vehicle_params=vehicle_params,
+    )
+    collision.fast_occupancy = False
+    start = VehicleState(
+        x=scenario.start.x,
+        z=scenario.start.z,
+        yaw=scenario.start.yaw,
+        speed=max(0.0, scenario.start.speed),
+        steering=scenario.start.steering,
+        t=0.0,
+    )
+    goal = VehicleState(
+        x=scenario.goal.x,
+        z=scenario.goal.z,
+        yaw=scenario.goal.yaw,
+        speed=0.0,
+        t=0.0,
+    )
+    if collision.collides_static(start) or collision.collides_static(goal):
+        return None
+    static_cfg = HybridAStarConfig(
+        xy_resolution=0.8,
+        yaw_resolution=math.radians(22.5),
+        step_dt=dt,
+        steps_per_motion=6,
+        steer_angles=(-0.55, -0.25, 0.0, 0.25, 0.55),
+        speeds=(1.6, 2.2),
+        max_iterations=8_000,
+        goal_xy_tol=1.4,
+        goal_yaw_tol=math.radians(50.0),
+        heuristic_weight=1.1,
+        record_substeps=True,
+    )
+    geom = HybridAStar(collision, model=model, config=static_cfg).plan(start, goal)
+    if geom is None or len(geom) < 2:
+        return None
+    if math.hypot(geom[-1].x - goal.x, geom[-1].z - goal.z) > 2.0:
+        return None
+    _ = (dt, cruise_scale)
+    return geom
+
+
 def plan_multimodal(
     facility: FacilitySpec,
     scenario: ScenarioSpec,

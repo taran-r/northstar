@@ -21,6 +21,28 @@ from northstar.trajectory.format import (
 )
 
 
+def subgoal_audit_fields(
+    subgoal: dict[str, float],
+    global_goal: dict[str, float],
+) -> dict[str, object]:
+    """Mark expert-derived subgoals so they are not treated as inference inputs.
+
+    ``subgoal`` is unchanged for loader compatibility. ``inference_goal`` is the
+    scenario destination, which is known before the expert trajectory exists.
+    """
+    expert_label = float(subgoal.get("is_local", 0.0)) > 0.5
+    return {
+        "subgoal_source": "expert_window_endpoint" if expert_label else "scenario_goal",
+        "expert_subgoal_is_label": expert_label,
+        "inference_goal": {
+            "x": float(global_goal["x"]),
+            "z": float(global_goal["z"]),
+            "yaw": float(global_goal.get("yaw", 0.0)),
+            "source": "scenario_goal",
+        },
+    }
+
+
 def _local_subgoal(
     states_xyz: np.ndarray,
     global_goal: dict[str, float],
@@ -77,7 +99,7 @@ def extract_windows(
         "z": scenario.goal.z,
         "yaw": scenario.goal.yaw,
     }
-    behavior = scenario.metadata.get("behavior_tag", "unknown")
+    behavior = record.metadata.get("behavior_tag") or scenario.metadata.get("behavior_tag", "unknown")
     windows: list[TrajectoryWindow] = []
 
     for start_i in range(0, len(states) - horizon, stride):
@@ -157,6 +179,7 @@ def extract_windows(
                     "map_size_m": map_size_m,
                     "map_resolution": map_resolution,
                     "pred_steps": pred_steps,
+                    **subgoal_audit_fields(subgoal, global_goal),
                 },
             )
         )

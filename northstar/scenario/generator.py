@@ -163,6 +163,43 @@ class ScenarioGenerator:
         )
 
         sid = scenario_id or f"scn_{seed:06d}"
+        return self._assemble(sid, seed, behavior, multi_modal, start, goal, static, dynamics, use_oracle)
+
+    def sample_endpoints(
+        self,
+        seed: int,
+        min_separation_m: float = 12.0,
+    ) -> Optional[tuple[VehicleState, VehicleState]]:
+        """Sample a start/goal pair on the fixed facility, far enough apart to be a real route."""
+        rng = np.random.default_rng(seed)
+        base_collision = CollisionChecker(
+            self.facility, occupancy=self._base_occ, vehicle_params=self.vehicle_params
+        )
+        spawn_zones = self._zones({"spawn", "corridor", "staging", "loading", "traversable", "work"})
+        goal_zones = self._zones({"goal", "loading", "staging", "corridor", "work"})
+        for _ in range(12):
+            start = self._sample_pose(spawn_zones, rng, base_collision)
+            goal = self._sample_pose(goal_zones, rng, base_collision)
+            if start is None or goal is None:
+                continue
+            if math.hypot(goal.x - start.x, goal.z - start.z) < min_separation_m:
+                continue
+            start.yaw = math.atan2(goal.z - start.z, goal.x - start.x)
+            return start, goal
+        return None
+
+    def _assemble(
+        self,
+        sid: str,
+        seed: int,
+        behavior: str,
+        multi_modal: bool,
+        start: VehicleState,
+        goal: VehicleState,
+        static: list,
+        dynamics: list,
+        use_oracle: bool,
+    ) -> ScenarioSpec:
         return ScenarioSpec(
             schema_version=FACILITY_SCHEMA_VERSION,
             scenario_id=sid,
