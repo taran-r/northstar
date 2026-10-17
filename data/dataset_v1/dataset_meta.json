@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "facility_path": "data\\dataset_v1\\facility\\industrial_facility_v1.json",
+  "vehicle_params": {
+    "length": 1.3,
+    "width": 0.8,
+    "wheelbase": 1.0,
+    "max_speed": 2.5,
+    "min_speed": 0.0,
+    "max_steer": 0.55,
+    "max_accel": 1.5,
+    "max_decel": 2.5,
+    "max_steer_rate": 1.2,
+    "footprint_margin": 0.05
+  },
+  "horizon": 32,
+  "dt": 0.2,
+  "map_size_m": 20.0,
+  "map_resolution": 0.25,
+  "future_features": [
+    "x",
+    "z",
+    "yaw",
+    "speed",
+    "steering",
+    "accel",
+    "t_rel"
+  ],
+  "conditioning": [
+    "ego0",
+    "subgoal",
+    "global_goal",
+    "facility_occ",
+    "static_occ",
+    "dynamic_occ (predicted, not GT)"
+  ],
+  "planner": {
+    "primary": "time-aware Hybrid A*",
+    "fallback": "Hybrid A* + velocity profile",
+    "smoothing": "B-spline + curvature-aware speed profile",
+    "oracle_note": "Scenarios with oracle_dynamics=true used ground-truth dynamic futures in the expert planner; NN conditioning still uses constant-velocity predictions."
+  },
+  "stats": {
+    "scenarios_requested": 360,
+    "min_windows": 5000,
+    "scenarios_ok": 363,
+    "trajectories_ok": 409,
+    "windows": 5021,
+    "failures": 2221,
+    "by_behavior": {
+      "straight": 31,
+      "sharp_turn": 31,
+      "long_curve": 31,
+      "tight_corridor": 30,
+      "intersection": 30,
+      "static_avoid": 30,
+      "brake_for_obstacle": 30,
+      "wait_traffic": 30,
+      "yield_intersection": 30,
+      "accelerate_clear": 30,
+      "detour_blockage": 30,
+      "follow_vehicle": 30
+    },
+    "oracle_scenarios": 71,
+    "multimodal_scenarios": 46
+  },
+  "elapsed_sec": 2313.200284719467,
+  "config": {
+    "out_dir": "data/dataset_v1",
+    "n_scenarios": 360,
+    "min_windows": 5000,
+    "seed": 42,
+    "dt": 0.2,
+    "horizon": 32,
+    "multimodal_fraction": 0.25,
+    "max_modes": 2,
+    "window_stride": 4,
+    "map_size_m": 20.0,
+    "map_resolution": 0.25,
+    "train_fraction": 0.8,
+    "val_fraction": 0.1,
+    "facility_path": null,
+    "max_attempts_factor": 15
+  },
+  "splits": {
+    "train": 4016,
+    "val": 502,
+    "test": 503
+  }
+}

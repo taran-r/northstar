@@ -1,0 +1,35 @@
+{
+  "sample_id": "scn_00199_m0_w0036",
+  "scenario_id": "scn_00199",
+  "trajectory_id": "scn_00199_m0",
+  "horizon": 32,
+  "dt": 0.2,
+  "ego0": {
+    "x": 36.14669536351242,
+    "z": 10.825605689607878,
+    "yaw": 0.5059927994338647,
+    "speed": 2.125,
+    "steering": -0.19480203038401608,
+    "t": 7.2
+  },
+  "subgoal": {
+    "x": 47.84782028198242,
+    "z": 15.59559154510498,
+    "yaw": -0.06981866806745529,
+    "is_local": 1.0
+  },
+  "global_goal": {
+    "x": 55.525160161766955,
+    "z": 21.016441442613164,
+    "yaw": -1.5707963267948966
+  },
+  "oracle_dynamics": true,
+  "behavior_tag": "wait_traffic",
+  "mode_id": 0,
+  "metadata": {
+    "start_index": 36,
+    "map_size_m": 20.0,
+    "map_resolution": 0.25,
+    "pred_steps": 8
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "scn_00037",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 2503265,
+  "start": {
+    "x": 21.494999187284293,
+    "z": 17.69283981604254,
+    "yaw": -0.31051111328703096,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 55.177801274739565,
+    "z": 6.884326520806516,
+    "yaw": 3.141592653589793,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_shipping_container",
+      "type": "shipping_container",
+      "x": 56.157706081852595,
+      "z": 10.358437516734561,
+      "yaw": 3.141592653589793,
+      "length": 2.651634161211244,
+      "width": 1.325817080605622,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_crate",
+      "type": "crate",
+      "x": 51.51126213130841,
+      "z": 2.087490093429634,
+      "yaw": 3.141592653589793,
+      "length": 0.9109264429794627,
+      "width": 0.9109264429794627,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_storage_rack",
+      "type": "storage_rack",
+      "x": 42.581283619774396,
+      "z": 23.373835067429415,
+      "yaw": -0.26271782184570697,
+      "length": 2.293187719466236,
+      "width": 0.9554948831109317,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_machinery",
+      "type": "machinery",
+      "x": 49.644040478990235,
+      "z": 23.484530244529353,
+      "yaw": 1.5707963267948966,
+      "length": 1.9580721773992817,
+      "width": 1.370650524179497,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_workstation",
+      "type": "workstation",
+      "x": 13.820315496671967,
+      "z": 4.509045714378511,
+      "yaw": 0.02931560642014358,
+      "length": 1.8828120763354546,
+      "width": 0.9414060381677273,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_pallet",
+      "type": "pallet",
+      "x": 2.987859640328363,
+      "z": 3.517647766631881,
+      "yaw": -1.5707963267948966,
+      "length": 1.234302717302793,
+      "width": 1.0285855977523275,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_shipping_container",
+      "type": "shipping_container",
+      "x": 54.593539246635615,
+      "z": 2.889924337544343,
+      "yaw": 0.0,
+      "length": 2.6720587737779566,
+      "width": 1.3360293868889783,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_workstation",
+      "type": "workstation",
+      "x": 26.791502267214128,
+      "z": 21.470124836903608,
+      "yaw": -1.5707963267948966,
+      "length": 1.5757656923332708,
+      "width": 0.7878828461666354,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 15.935818008440808,
+      "z": 5.464806688835143,
+      "yaw": 1.5707963267948966,
+      "length": 3.0172181462390655,
+      "width": 1.4008512821824235,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_9_workstation",
+      "type": "workstation",
+      "x": 50.24100206929279,
+      "z": 11.176418044823183,
+      "yaw": 3.141592653589793,
+      "length": 1.9859322068412513,
+      "width": 0.9929661034206256,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_10_crate",
+      "type": "crate",
+      "x": 58.195116169785365,
+      "z": 4.931532711228709,
+      "yaw": 0.0,
+      "length": 0.7775802677407591,
+      "width": 0.7775802677407591,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_11_storage_rack",
+      "type": "storage_rack",
+      "x": 38.75693247765646,
+      "z": 23.377173293886898,
+      "yaw": 0.0,
+      "length": 2.4411571373895136,
+      "width": 1.0171488072456307,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_12_workstation",
+      "type": "workstation",
+      "x": 14.500544423376136,
+      "z": 10.053141849020905,
+      "yaw": -0.0341616664692605,
+      "length": 1.7155591128912202,
+      "width": 0.8577795564456101,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "sharp_turn"
+    ]
+  },
+  "oracle_dynamics": false
+}

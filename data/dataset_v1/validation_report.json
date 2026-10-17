@@ -1,0 +1,51 @@
+{
+  "n_samples": 5021,
+  "bad_samples": 0,
+  "oracle_windows": 1086,
+  "behaviors": {
+    "straight": 427,
+    "sharp_turn": 304,
+    "long_curve": 398,
+    "tight_corridor": 345,
+    "intersection": 480,
+    "static_avoid": 650,
+    "brake_for_obstacle": 301,
+    "wait_traffic": 411,
+    "yield_intersection": 359,
+    "accelerate_clear": 305,
+    "detour_blockage": 737,
+    "follow_vehicle": 304
+  },
+  "mean_max_speed": 1.898536148168157,
+  "center_occupied_count": 88,
+  "splits": {
+    "train": 4016,
+    "val": 502,
+    "test": 503
+  },
+  "stats": {
+    "scenarios_requested": 360,
+    "min_windows": 5000,
+    "scenarios_ok": 363,
+    "trajectories_ok": 409,
+    "windows": 5021,
+    "failures": 2221,
+    "by_behavior": {
+      "straight": 31,
+      "sharp_turn": 31,
+      "long_curve": 31,
+      "tight_corridor": 30,
+      "intersection": 30,
+      "static_avoid": 30,
+      "brake_for_obstacle": 30,
+      "wait_traffic": 30,
+      "yield_intersection": 30,
+      "accelerate_clear": 30,
+      "detour_blockage": 30,
+      "follow_vehicle": 30
+    },
+    "oracle_scenarios": 71,
+    "multimodal_scenarios": 46
+  },
+  "ok": true
+}

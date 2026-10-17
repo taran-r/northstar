@@ -1,0 +1,35 @@
+{
+  "sample_id": "scn_00222_m0_w0068",
+  "scenario_id": "scn_00222",
+  "trajectory_id": "scn_00222_m0",
+  "horizon": 32,
+  "dt": 0.2,
+  "ego0": {
+    "x": 23.011162037733968,
+    "z": 14.751769547139927,
+    "yaw": 0.21705322835828367,
+    "speed": 1.25,
+    "steering": -0.1104693044612087,
+    "t": 13.600000000000001
+  },
+  "subgoal": {
+    "x": 30.322999954223633,
+    "z": 15.040433883666992,
+    "yaw": 0.20464766025543213,
+    "is_local": 1.0
+  },
+  "global_goal": {
+    "x": 34.64232467449063,
+    "z": 16.372171546638327,
+    "yaw": 3.141592653589793
+  },
+  "oracle_dynamics": true,
+  "behavior_tag": "brake_for_obstacle",
+  "mode_id": 0,
+  "metadata": {
+    "start_index": 68,
+    "map_size_m": 20.0,
+    "map_resolution": 0.25,
+    "pred_steps": 8
+  }
+}

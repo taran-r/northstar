@@ -1,0 +1,917 @@
+{
+  "schema_version": "1.0.0",
+  "facility_id": "industrial_facility_v1",
+  "name": "Northstar Industrial Facility v1",
+  "dimensions": {
+    "width_x": 60.0,
+    "depth_z": 40.0,
+    "height_y": 6.0
+  },
+  "origin": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "walls": [
+    {
+      "id": "ext_south",
+      "x1": 0.0,
+      "z1": 0.0,
+      "x2": 60.0,
+      "z2": 0.0,
+      "thickness": 0.4,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "ext_north",
+      "x1": 0.0,
+      "z1": 40.0,
+      "x2": 60.0,
+      "z2": 40.0,
+      "thickness": 0.4,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "ext_west",
+      "x1": 0.0,
+      "z1": 0.0,
+      "x2": 0.0,
+      "z2": 40.0,
+      "thickness": 0.4,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "ext_east",
+      "x1": 60.0,
+      "z1": 0.0,
+      "x2": 60.0,
+      "z2": 40.0,
+      "thickness": 0.4,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_w1",
+      "x1": 18.0,
+      "z1": 0.0,
+      "x2": 18.0,
+      "z2": 12.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_w2",
+      "x1": 18.0,
+      "z1": 16.0,
+      "x2": 18.0,
+      "z2": 28.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_w3",
+      "x1": 18.0,
+      "z1": 32.0,
+      "x2": 18.0,
+      "z2": 40.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_m1",
+      "x1": 36.0,
+      "z1": 0.0,
+      "x2": 36.0,
+      "z2": 10.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_m2",
+      "x1": 36.0,
+      "z1": 14.0,
+      "x2": 36.0,
+      "z2": 26.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_m3",
+      "x1": 36.0,
+      "z1": 30.0,
+      "x2": 36.0,
+      "z2": 40.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_e1",
+      "x1": 48.0,
+      "z1": 0.0,
+      "x2": 48.0,
+      "z2": 8.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "div_e2",
+      "x1": 48.0,
+      "z1": 18.0,
+      "x2": 48.0,
+      "z2": 40.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_s1",
+      "x1": 0.0,
+      "z1": 12.0,
+      "x2": 16.0,
+      "z2": 12.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_s2",
+      "x1": 20.0,
+      "z1": 12.0,
+      "x2": 34.0,
+      "z2": 12.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_s3",
+      "x1": 38.0,
+      "z1": 12.0,
+      "x2": 48.0,
+      "z2": 12.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_n1",
+      "x1": 0.0,
+      "z1": 28.0,
+      "x2": 16.0,
+      "z2": 28.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_n2",
+      "x1": 20.0,
+      "z1": 28.0,
+      "x2": 34.0,
+      "z2": 28.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "corr_n3",
+      "x1": 38.0,
+      "z1": 28.0,
+      "x2": 60.0,
+      "z2": 28.0,
+      "thickness": 0.3,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "bay_a",
+      "x1": 2.0,
+      "z1": 6.0,
+      "x2": 10.0,
+      "z2": 6.0,
+      "thickness": 0.25,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "bay_b",
+      "x1": 20.0,
+      "z1": 20.0,
+      "x2": 30.0,
+      "z2": 20.0,
+      "thickness": 0.25,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "bay_c",
+      "x1": 8.0,
+      "z1": 2.0,
+      "x2": 8.0,
+      "z2": 8.0,
+      "thickness": 0.25,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "bay_d",
+      "x1": 54.0,
+      "z1": 30.0,
+      "x2": 54.0,
+      "z2": 38.0,
+      "thickness": 0.25,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    },
+    {
+      "id": "bay_e",
+      "x1": 50.0,
+      "z1": 8.0,
+      "x2": 58.0,
+      "z2": 8.0,
+      "thickness": 0.25,
+      "height": 4.0,
+      "y": 0.0,
+      "kind": "structural"
+    }
+  ],
+  "columns": [
+    {
+      "id": "col_0",
+      "x": 9.0,
+      "z": 6.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_1",
+      "x": 9.0,
+      "z": 20.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_2",
+      "x": 9.0,
+      "z": 34.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_3",
+      "x": 27.0,
+      "z": 6.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_4",
+      "x": 27.0,
+      "z": 20.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_5",
+      "x": 27.0,
+      "z": 34.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_6",
+      "x": 42.0,
+      "z": 6.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_7",
+      "x": 42.0,
+      "z": 20.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_8",
+      "x": 42.0,
+      "z": 34.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_9",
+      "x": 54.0,
+      "z": 6.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_10",
+      "x": 54.0,
+      "z": 20.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    },
+    {
+      "id": "col_11",
+      "x": 54.0,
+      "z": 34.0,
+      "radius": 0.35,
+      "height": 4.5,
+      "y": 0.0
+    }
+  ],
+  "zones": [
+    {
+      "id": "zone_loading",
+      "kind": "loading",
+      "polygon": [
+        [
+          48.5,
+          0.5
+        ],
+        [
+          59.5,
+          0.5
+        ],
+        [
+          59.5,
+          11.5
+        ],
+        [
+          48.5,
+          11.5
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "zone_staging",
+      "kind": "staging",
+      "polygon": [
+        [
+          48.5,
+          18.5
+        ],
+        [
+          59.5,
+          18.5
+        ],
+        [
+          59.5,
+          27.5
+        ],
+        [
+          48.5,
+          27.5
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "zone_equip_w",
+      "kind": "equipment",
+      "polygon": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          17.0,
+          1.0
+        ],
+        [
+          17.0,
+          11.0
+        ],
+        [
+          1.0,
+          11.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "zone_work_mid",
+      "kind": "work",
+      "polygon": [
+        [
+          19.0,
+          13.0
+        ],
+        [
+          35.0,
+          13.0
+        ],
+        [
+          35.0,
+          27.0
+        ],
+        [
+          19.0,
+          27.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "zone_open_maneuver",
+      "kind": "traversable",
+      "polygon": [
+        [
+          37.0,
+          13.0
+        ],
+        [
+          47.5,
+          13.0
+        ],
+        [
+          47.5,
+          27.0
+        ],
+        [
+          37.0,
+          27.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "corridor_main",
+      "kind": "corridor",
+      "polygon": [
+        [
+          1.0,
+          12.5
+        ],
+        [
+          59.0,
+          12.5
+        ],
+        [
+          59.0,
+          15.5
+        ],
+        [
+          1.0,
+          15.5
+        ]
+      ],
+      "metadata": {
+        "axis": "ew"
+      }
+    },
+    {
+      "id": "corridor_north",
+      "kind": "corridor",
+      "polygon": [
+        [
+          1.0,
+          26.5
+        ],
+        [
+          47.5,
+          26.5
+        ],
+        [
+          47.5,
+          29.5
+        ],
+        [
+          1.0,
+          29.5
+        ]
+      ],
+      "metadata": {
+        "axis": "ew"
+      }
+    },
+    {
+      "id": "corridor_ns_w",
+      "kind": "corridor",
+      "polygon": [
+        [
+          16.5,
+          1.0
+        ],
+        [
+          19.5,
+          1.0
+        ],
+        [
+          19.5,
+          39.0
+        ],
+        [
+          16.5,
+          39.0
+        ]
+      ],
+      "metadata": {
+        "axis": "ns"
+      }
+    },
+    {
+      "id": "corridor_ns_m",
+      "kind": "corridor",
+      "polygon": [
+        [
+          34.5,
+          1.0
+        ],
+        [
+          37.5,
+          1.0
+        ],
+        [
+          37.5,
+          39.0
+        ],
+        [
+          34.5,
+          39.0
+        ]
+      ],
+      "metadata": {
+        "axis": "ns"
+      }
+    },
+    {
+      "id": "intersect_a",
+      "kind": "intersection",
+      "polygon": [
+        [
+          16.0,
+          12.0
+        ],
+        [
+          20.0,
+          12.0
+        ],
+        [
+          20.0,
+          16.0
+        ],
+        [
+          16.0,
+          16.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "intersect_b",
+      "kind": "intersection",
+      "polygon": [
+        [
+          34.0,
+          12.0
+        ],
+        [
+          38.0,
+          12.0
+        ],
+        [
+          38.0,
+          16.0
+        ],
+        [
+          34.0,
+          16.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "intersect_c",
+      "kind": "intersection",
+      "polygon": [
+        [
+          16.0,
+          26.0
+        ],
+        [
+          20.0,
+          26.0
+        ],
+        [
+          20.0,
+          30.0
+        ],
+        [
+          16.0,
+          30.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "intersect_d",
+      "kind": "intersection",
+      "polygon": [
+        [
+          34.0,
+          26.0
+        ],
+        [
+          38.0,
+          26.0
+        ],
+        [
+          38.0,
+          30.0
+        ],
+        [
+          34.0,
+          30.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "spawn_west",
+      "kind": "spawn",
+      "polygon": [
+        [
+          2.0,
+          13.0
+        ],
+        [
+          8.0,
+          13.0
+        ],
+        [
+          8.0,
+          15.0
+        ],
+        [
+          2.0,
+          15.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "spawn_south",
+      "kind": "spawn",
+      "polygon": [
+        [
+          25.0,
+          2.0
+        ],
+        [
+          31.0,
+          2.0
+        ],
+        [
+          31.0,
+          6.0
+        ],
+        [
+          25.0,
+          6.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "goal_loading",
+      "kind": "goal",
+      "polygon": [
+        [
+          52.0,
+          2.0
+        ],
+        [
+          58.0,
+          2.0
+        ],
+        [
+          58.0,
+          8.0
+        ],
+        [
+          52.0,
+          8.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "goal_staging",
+      "kind": "goal",
+      "polygon": [
+        [
+          52.0,
+          20.0
+        ],
+        [
+          58.0,
+          20.0
+        ],
+        [
+          58.0,
+          26.0
+        ],
+        [
+          52.0,
+          26.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "goal_north",
+      "kind": "goal",
+      "polygon": [
+        [
+          4.0,
+          32.0
+        ],
+        [
+          12.0,
+          32.0
+        ],
+        [
+          12.0,
+          38.0
+        ],
+        [
+          4.0,
+          38.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "pit_1",
+      "kind": "non_traversable",
+      "polygon": [
+        [
+          3.0,
+          32.0
+        ],
+        [
+          7.0,
+          32.0
+        ],
+        [
+          7.0,
+          36.0
+        ],
+        [
+          3.0,
+          36.0
+        ]
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "pit_2",
+      "kind": "non_traversable",
+      "polygon": [
+        [
+          40.0,
+          32.0
+        ],
+        [
+          45.0,
+          32.0
+        ],
+        [
+          45.0,
+          38.0
+        ],
+        [
+          40.0,
+          38.0
+        ]
+      ],
+      "metadata": {}
+    }
+  ],
+  "permanent_objects": [
+    {
+      "id": "cnc_station_1",
+      "type": "machinery",
+      "x": 5.0,
+      "z": 3.5,
+      "yaw": 0.0,
+      "length": 3.0,
+      "width": 1.6,
+      "height": 2.2,
+      "y": 0.0,
+      "permanent": true,
+      "metadata": {}
+    },
+    {
+      "id": "cnc_station_2",
+      "type": "machinery",
+      "x": 12.0,
+      "z": 3.5,
+      "yaw": 0.0,
+      "length": 3.0,
+      "width": 1.6,
+      "height": 2.2,
+      "y": 0.0,
+      "permanent": true,
+      "metadata": {}
+    },
+    {
+      "id": "conveyor_pad",
+      "type": "machinery",
+      "x": 27.0,
+      "z": 34.0,
+      "yaw": 0.0,
+      "length": 6.0,
+      "width": 1.2,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": true,
+      "metadata": {}
+    },
+    {
+      "id": "dock_bumper_a",
+      "type": "barrier",
+      "x": 59.2,
+      "z": 4.0,
+      "yaw": 1.5708,
+      "length": 4.0,
+      "width": 0.4,
+      "height": 1.2,
+      "y": 0.0,
+      "permanent": true,
+      "metadata": {}
+    },
+    {
+      "id": "dock_bumper_b",
+      "type": "barrier",
+      "x": 59.2,
+      "z": 22.0,
+      "yaw": 1.5708,
+      "length": 4.0,
+      "width": 0.4,
+      "height": 1.2,
+      "y": 0.0,
+      "permanent": true,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "coordinate_system": {
+      "horizontal": "XZ",
+      "elevation": "Y",
+      "units": {
+        "distance": "m",
+        "time": "s",
+        "angle": "rad"
+      }
+    },
+    "description": "Persistent warehouse/workshop shell with E-W and N-S corridors, work bays, loading/staging docks, and support columns."
+  }
+}
