@@ -1,0 +1,360 @@
+{
+  "splits": {
+    "n_scenarios": {
+      "train": 357,
+      "val": 236,
+      "test": 239
+    },
+    "leak_train_val": 235,
+    "leak_train_test": 233,
+    "leak_val_test": 175,
+    "ok": false
+  },
+  "loader": {
+    "n_listed": 5021,
+    "n_ok": 4692,
+    "n_fail": 329,
+    "failures": [
+      {
+        "sample": "scn_00114_m0_w0008.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00163_m0_w0020.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00047_m1_w0020.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00036_m0_w0036.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00212_m0_w0004.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00303_m0_w0032.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00349_m0_w0024.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00272_m0_w0020.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00323_m1_w0004.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00021_m0_w0004.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00081_m1_w0008.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00150_m0_w0000.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00183_m0_w0004.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00323_m1_w0020.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00234_m0_w0000.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00114_m0_w0032.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00047_m0_w0004.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00193_m0_w0000.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00079_m0_w0016.npz",
+        "error": "AssertionError()"
+      },
+      {
+        "sample": "scn_00212_m0_w0020.npz",
+        "error": "AssertionError()"
+      }
+    ],
+    "mean_future_rel_origin_err": 0.0,
+    "local_subgoal_windows": 4414,
+    "oracle_windows": 1065,
+    "windows_with_predicted_dyn_in_map": 2065,
+    "windows_with_dyn_near_ego_8m": 1535,
+    "loader_ok": true,
+    "batch_shapes": {
+      "train": {
+        "future": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ],
+        "ego0": [
+          [
+            8,
+            5
+          ],
+          "torch.float32"
+        ],
+        "subgoal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "global_goal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "oracle_dynamics": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "mode_id": [
+          [
+            8
+          ],
+          "torch.int64"
+        ],
+        "dt": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "facility_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "static_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "dynamic_occ": [
+          [
+            8,
+            8,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "future_rel": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ]
+      },
+      "val": {
+        "future": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ],
+        "ego0": [
+          [
+            8,
+            5
+          ],
+          "torch.float32"
+        ],
+        "subgoal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "global_goal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "oracle_dynamics": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "mode_id": [
+          [
+            8
+          ],
+          "torch.int64"
+        ],
+        "dt": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "facility_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "static_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "dynamic_occ": [
+          [
+            8,
+            8,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "future_rel": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ]
+      },
+      "test": {
+        "future": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ],
+        "ego0": [
+          [
+            8,
+            5
+          ],
+          "torch.float32"
+        ],
+        "subgoal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "global_goal": [
+          [
+            8,
+            3
+          ],
+          "torch.float32"
+        ],
+        "oracle_dynamics": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "mode_id": [
+          [
+            8
+          ],
+          "torch.int64"
+        ],
+        "dt": [
+          [
+            8
+          ],
+          "torch.float32"
+        ],
+        "facility_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "static_occ": [
+          [
+            8,
+            1,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "dynamic_occ": [
+          [
+            8,
+            8,
+            80,
+            80
+          ],
+          "torch.float32"
+        ],
+        "future_rel": [
+          [
+            8,
+            32,
+            7
+          ],
+          "torch.float32"
+        ]
+      }
+    }
+  }
+}

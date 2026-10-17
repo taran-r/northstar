@@ -85,8 +85,20 @@
     "max_attempts_factor": 15
   },
   "splits": {
-    "train": 4016,
-    "val": 502,
-    "test": 503
+    "train": 4203,
+    "val": 420,
+    "test": 398
+  },
+  "split_policy": {
+    "type": "scenario",
+    "seed": 42,
+    "train_fraction": 0.8,
+    "val_fraction": 0.1,
+    "n_scenarios": {
+      "train": 290,
+      "val": 36,
+      "test": 37
+    },
+    "note": "Windows from the same scenario_id never cross splits."
   }
 }
