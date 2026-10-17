@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00443",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 143391143,
+  "start": {
+    "x": 34.7853349312822,
+    "z": 16.76467909464817,
+    "yaw": -2.9610966903368356,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 18.83716241697768,
+    "z": 13.854425293993053,
+    "yaw": 0.0,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_crate",
+      "type": "crate",
+      "x": 46.06630030018782,
+      "z": 26.77972871725505,
+      "yaw": -0.14217300434975036,
+      "length": 0.778144481146415,
+      "width": 0.778144481146415,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_barrier",
+      "type": "barrier",
+      "x": 51.68468883969698,
+      "z": 4.32741987436458,
+      "yaw": -1.5707963267948966,
+      "length": 1.3178002396923305,
+      "width": 0.3514133972512881,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_crate",
+      "type": "crate",
+      "x": 53.45015474938948,
+      "z": 1.8428914209677045,
+      "yaw": 1.5707963267948966,
+      "length": 0.7391402124443742,
+      "width": 0.7391402124443742,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "brake_oncoming"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "brake_oncoming",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01167",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 164827876,
+  "start": {
+    "x": 26.97723920721656,
+    "z": 4.1911474700227895,
+    "yaw": 0.5688018926518498,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 55.17282180383287,
+    "z": 22.21600567993458,
+    "yaw": 3.141592653589793,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_crate",
+      "type": "crate",
+      "x": 24.27263788591083,
+      "z": 20.669016145079766,
+      "yaw": 0.0,
+      "length": 0.7759718943651167,
+      "width": 0.7759718943651167,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_equipment_cart",
+      "type": "equipment_cart",
+      "x": 26.913264250795596,
+      "z": 24.81114239135986,
+      "yaw": 3.141592653589793,
+      "length": 1.0086410901916434,
+      "width": 0.605184654114986,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_barrier",
+      "type": "barrier",
+      "x": 55.10658575166259,
+      "z": 3.8021758242302712,
+      "yaw": -0.03413627599116187,
+      "length": 1.5468246199371531,
+      "width": 0.4124865653165742,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_shipping_container",
+      "type": "shipping_container",
+      "x": 9.793213896260806,
+      "z": 8.81592081430877,
+      "yaw": -1.5707963267948966,
+      "length": 3.3029066602271944,
+      "width": 1.6514533301135972,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_machinery",
+      "type": "machinery",
+      "x": 52.97547400667208,
+      "z": 24.66263353986454,
+      "yaw": 0.0,
+      "length": 2.1572735293633967,
+      "width": 1.5100914705543775,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_equipment_cart",
+      "type": "equipment_cart",
+      "x": 52.03824426204838,
+      "z": 3.763539529172735,
+      "yaw": 0.0,
+      "length": 1.1227084648331653,
+      "width": 0.6736250788998992,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_pallet",
+      "type": "pallet",
+      "x": 55.64514622445923,
+      "z": 10.313631418246063,
+      "yaw": 1.5707963267948966,
+      "length": 1.087877195072111,
+      "width": 0.9065643292267591,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_equipment_cart",
+      "type": "equipment_cart",
+      "x": 49.17441703240746,
+      "z": 24.27300941879613,
+      "yaw": 1.5707963267948966,
+      "length": 0.9047109440847578,
+      "width": 0.5428265664508547,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_machinery",
+      "type": "machinery",
+      "x": 44.11483983847606,
+      "z": 21.317674586350297,
+      "yaw": -0.016064847747791766,
+      "length": 1.8326213720199325,
+      "width": 1.2828349604139526,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

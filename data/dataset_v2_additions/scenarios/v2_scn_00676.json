@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00676",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 150161888,
+  "start": {
+    "x": 20.96974428689881,
+    "z": 18.925706831326718,
+    "yaw": -0.5323684586406398,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 51.71832499403144,
+    "z": 0.8116260809530691,
+    "yaw": 0.0,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_crate",
+      "type": "crate",
+      "x": 7.454523871774288,
+      "z": 4.763676252549684,
+      "yaw": 3.141592653589793,
+      "length": 0.7095461643034822,
+      "width": 0.7095461643034822,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_shipping_container",
+      "type": "shipping_container",
+      "x": 25.09530468582765,
+      "z": 13.69705134034541,
+      "yaw": -1.5707963267948966,
+      "length": 2.76277330694242,
+      "width": 1.38138665347121,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_equipment_cart",
+      "type": "equipment_cart",
+      "x": 39.85126882991591,
+      "z": 21.249279017840433,
+      "yaw": 0.0873980412715612,
+      "length": 1.1310115891448853,
+      "width": 0.6786069534869311,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "yield_cross"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "yield_cross",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

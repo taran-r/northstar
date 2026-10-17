@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01071",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 162079983,
+  "start": {
+    "x": 4.61202090606397,
+    "z": 15.190736153903561,
+    "yaw": 1.2602763760079825,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 8.325184569804028,
+    "z": 26.761796329136295,
+    "yaw": -1.5707963267948966,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_shipping_container",
+      "type": "shipping_container",
+      "x": 55.27978062202228,
+      "z": 26.18125823467586,
+      "yaw": 1.5707963267948966,
+      "length": 2.689571502185928,
+      "width": 1.344785751092964,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 13.691355811340223,
+      "z": 2.575308509635275,
+      "yaw": -1.5707963267948966,
+      "length": 2.432312026915409,
+      "width": 1.1292877267821542,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "brake_oncoming"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "brake_oncoming",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

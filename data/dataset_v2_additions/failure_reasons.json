@@ -1,0 +1,11 @@
+{
+  "ordinary_plan_failed": 3102,
+  "swept_static_collision": 556,
+  "dynamic_collision": 103,
+  "static_plan_failed": 297,
+  "open_loop_drift": 168,
+  "timed_follow_failed": 28,
+  "no_windows": 17,
+  "id_collision": 15517,
+  "near_duplicate": 42
+}

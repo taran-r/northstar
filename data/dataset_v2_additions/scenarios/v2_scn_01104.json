@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01104",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 162990668,
+  "start": {
+    "x": 34.30684107107794,
+    "z": 24.996186422160708,
+    "yaw": -2.201386845177876,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 26.2651793091303,
+    "z": 13.980506592464392,
+    "yaw": -1.5707963267948966,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_machinery",
+      "type": "machinery",
+      "x": 51.14326917380726,
+      "z": 6.058312483892828,
+      "yaw": 0.23411763104018618,
+      "length": 2.2740065401654226,
+      "width": 1.5918045781157957,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_workstation",
+      "type": "workstation",
+      "x": 13.241213395688009,
+      "z": 2.430405826261094,
+      "yaw": 0.0,
+      "length": 1.9111624912272225,
+      "width": 0.9555812456136112,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_workstation",
+      "type": "workstation",
+      "x": 6.639775127665867,
+      "z": 2.4295995735816627,
+      "yaw": 3.141592653589793,
+      "length": 1.992414557469905,
+      "width": 0.9962072787349525,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "yield_cross"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "yield_cross",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01047",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 161454382,
+  "start": {
+    "x": 31.931653303344604,
+    "z": 20.510352408769858,
+    "yaw": 2.643493998666519,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 8.835815265917656,
+    "z": 33.0707064473765,
+    "yaw": 3.141592653589793,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_crate",
+      "type": "crate",
+      "x": 55.14924599063678,
+      "z": 2.4629618201902512,
+      "yaw": 3.141592653589793,
+      "length": 0.873974799550169,
+      "width": 0.873974799550169,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_barrier",
+      "type": "barrier",
+      "x": 31.22476547280816,
+      "z": 25.93764572142869,
+      "yaw": 1.5707963267948966,
+      "length": 1.6891353814841295,
+      "width": 0.4504361017291012,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_pallet",
+      "type": "pallet",
+      "x": 29.916644121994405,
+      "z": 14.097707883145633,
+      "yaw": 1.5707963267948966,
+      "length": 1.037230295287012,
+      "width": 0.8643585794058434,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "brake_oncoming"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "brake_oncoming",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

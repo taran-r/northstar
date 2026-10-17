@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00284",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 139083207,
+  "start": {
+    "x": 33.31212664115442,
+    "z": 16.32759912886698,
+    "yaw": -0.4415748842535576,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 56.198999124759794,
+    "z": 5.508839724828151,
+    "yaw": 3.141592653589793,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_machinery",
+      "type": "machinery",
+      "x": 41.670532626573184,
+      "z": 15.919593091533091,
+      "yaw": 0.2076568250841752,
+      "length": 1.967191873355046,
+      "width": 1.3770343113485322,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_crate",
+      "type": "crate",
+      "x": 50.958961473202535,
+      "z": 11.017959420619114,
+      "yaw": -1.5707963267948966,
+      "length": 0.8946818996173163,
+      "width": 0.8946818996173163,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_barrier",
+      "type": "barrier",
+      "x": 38.97033607556546,
+      "z": 26.342439993996543,
+      "yaw": -0.14231258468008273,
+      "length": 1.5877784591813886,
+      "width": 0.42340758911503695,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "straight",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "yield_cross"
+    ],
+    "layout": "ordinary",
+    "interaction_fallback_from": "yield_cross",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

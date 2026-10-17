@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01137",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 164051814,
+  "start": {
+    "x": 19.453397247535484,
+    "z": 4.251992777192761,
+    "yaw": 1.650733826990515,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 16.885410861582713,
+    "z": 36.30846481782493,
+    "yaw": 0.0,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_machinery",
+      "type": "machinery",
+      "x": 38.348938015539495,
+      "z": 26.00838177498813,
+      "yaw": 0.0,
+      "length": 2.2906794495070963,
+      "width": 1.6034756146549674,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_storage_rack",
+      "type": "storage_rack",
+      "x": 50.37391452928122,
+      "z": 4.213209927680252,
+      "yaw": -1.5707963267948966,
+      "length": 2.3084119864628687,
+      "width": 0.961838327692862,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_crate",
+      "type": "crate",
+      "x": 33.96366819660853,
+      "z": 20.417605773504825,
+      "yaw": 3.141592653589793,
+      "length": 0.9008111133744414,
+      "width": 0.9008111133744414,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_equipment_cart",
+      "type": "equipment_cart",
+      "x": 8.998657953278242,
+      "z": 7.801593105951888,
+      "yaw": -1.5707963267948966,
+      "length": 1.1173451700210033,
+      "width": 0.670407102012602,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_barrier",
+      "type": "barrier",
+      "x": 44.695909310307954,
+      "z": 17.167170383380277,
+      "yaw": 3.141592653589793,
+      "length": 1.5843169758543796,
+      "width": 0.4224845268945012,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_pallet",
+      "type": "pallet",
+      "x": 57.9455392648881,
+      "z": 4.675212656622619,
+      "yaw": -1.5707963267948966,
+      "length": 1.069224399088838,
+      "width": 0.8910203325740316,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_machinery",
+      "type": "machinery",
+      "x": 45.97390334676801,
+      "z": 22.14087907731181,
+      "yaw": 3.141592653589793,
+      "length": 1.939058193421709,
+      "width": 1.3573407353951963,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 22.044878297977064,
+      "z": 26.08911765015986,
+      "yaw": 0.07835003656944917,
+      "length": 2.656959724616433,
+      "width": 1.2335884435719155,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_workstation",
+      "type": "workstation",
+      "x": 4.869660463354794,
+      "z": 7.782742670836334,
+      "yaw": 0.0,
+      "length": 1.9820102738742567,
+      "width": 0.9910051369371283,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

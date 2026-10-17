@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00732",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 152022853,
+  "start": {
+    "x": 46.05002966018378,
+    "z": 15.05151932943015,
+    "yaw": 2.584253166685932,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 29.104137741249616,
+    "z": 25.613036783959227,
+    "yaw": -1.5707963267948966,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_pallet",
+      "type": "pallet",
+      "x": 52.04387933358055,
+      "z": 26.007702804985627,
+      "yaw": 3.141592653589793,
+      "length": 1.2988770437703805,
+      "width": 1.0823975364753171,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_pallet",
+      "type": "pallet",
+      "x": 57.04397114244865,
+      "z": 9.855570874577214,
+      "yaw": 3.141592653589793,
+      "length": 1.365478138034652,
+      "width": 1.1378984483622099,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_storage_rack",
+      "type": "storage_rack",
+      "x": 34.52809311178238,
+      "z": 21.841120523593414,
+      "yaw": 0.040882744887611844,
+      "length": 2.050021302537794,
+      "width": 0.8541755427240809,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_storage_rack",
+      "type": "storage_rack",
+      "x": 40.5322510276453,
+      "z": 23.431840349708082,
+      "yaw": -1.5707963267948966,
+      "length": 2.066780063697907,
+      "width": 0.861158359874128,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_shipping_container",
+      "type": "shipping_container",
+      "x": 43.279844120868106,
+      "z": 25.112775619374553,
+      "yaw": -1.5707963267948966,
+      "length": 2.6636728599591706,
+      "width": 1.3318364299795853,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_shipping_container",
+      "type": "shipping_container",
+      "x": 57.63598417353453,
+      "z": 21.94017648514235,
+      "yaw": 1.5707963267948966,
+      "length": 3.0738896351294054,
+      "width": 1.5369448175647027,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_crate",
+      "type": "crate",
+      "x": 30.86849901548517,
+      "z": 14.004574440490597,
+      "yaw": -1.5707963267948966,
+      "length": 0.8707662855896703,
+      "width": 0.8707662855896703,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_equipment_cart",
+      "type": "equipment_cart",
+      "x": 54.38353516914526,
+      "z": 11.070267993999849,
+      "yaw": 0.0,
+      "length": 1.1159105339507964,
+      "width": 0.6695463203704778,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 12.983497668037112,
+      "z": 8.253191524120538,
+      "yaw": -1.5707963267948966,
+      "length": 2.6493285283528594,
+      "width": 1.2300453881638276,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

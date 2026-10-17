@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00315",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 140128515,
+  "start": {
+    "x": 16.64512380457649,
+    "z": 6.152043412301541,
+    "yaw": 1.840758568489039,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 7.842777757567814,
+    "z": 37.96190905404063,
+    "yaw": 0.0,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_machinery",
+      "type": "machinery",
+      "x": 26.685555515135626,
+      "z": 26.911121126094812,
+      "yaw": 0.0,
+      "length": 1.7290247609152976,
+      "width": 1.2103173326407082,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_workstation",
+      "type": "workstation",
+      "x": 12.558005737567376,
+      "z": 7.542922410670765,
+      "yaw": 0.12758503695606543,
+      "length": 1.6281371551891972,
+      "width": 0.8140685775945986,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_pallet",
+      "type": "pallet",
+      "x": 14.085037112607314,
+      "z": 3.4291380263809783,
+      "yaw": 0.0,
+      "length": 1.3647254290660848,
+      "width": 1.1372711908884041,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_machinery",
+      "type": "machinery",
+      "x": 55.70981421549811,
+      "z": 9.930785414993885,
+      "yaw": 1.5707963267948966,
+      "length": 2.293259130924148,
+      "width": 1.6052813916469035,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_storage_rack",
+      "type": "storage_rack",
+      "x": 48.73008074135565,
+      "z": 2.022554170523211,
+      "yaw": 1.5707963267948966,
+      "length": 2.7097866410735585,
+      "width": 1.1290777671139827,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_workstation",
+      "type": "workstation",
+      "x": 28.69120166924168,
+      "z": 25.00911219043936,
+      "yaw": 1.5707963267948966,
+      "length": 1.7283133319574087,
+      "width": 0.8641566659787043,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_machinery",
+      "type": "machinery",
+      "x": 23.858488210478924,
+      "z": 13.089061791550305,
+      "yaw": 3.141592653589793,
+      "length": 1.814155198641875,
+      "width": 1.2699086390493124,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_equipment_cart",
+      "type": "equipment_cart",
+      "x": 51.24103794362933,
+      "z": 11.015093718871944,
+      "yaw": -1.5707963267948966,
+      "length": 0.8622861238045777,
+      "width": 0.5173716742827466,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 47.26834579230635,
+      "z": 17.41625385964897,
+      "yaw": 0.0,
+      "length": 2.4458917176430797,
+      "width": 1.13559258319143,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_01256",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 167417389,
+  "start": {
+    "x": 18.400194209379553,
+    "z": 2.7049342087170842,
+    "yaw": 0.9525383823020218,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 35.01348733695147,
+    "z": 26.061753283671006,
+    "yaw": -1.5707963267948966,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 38.79720567933014,
+      "z": 22.233277525563004,
+      "yaw": 0.0,
+      "length": 2.9120543786262743,
+      "width": 1.3520252472193417,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_storage_rack",
+      "type": "storage_rack",
+      "x": 50.47573610208453,
+      "z": 22.77951080502134,
+      "yaw": 0.0,
+      "length": 2.2977871338213482,
+      "width": 0.9574113057588952,
+      "height": 2.5,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_crate",
+      "type": "crate",
+      "x": 55.6056957756697,
+      "z": 23.77034189199958,
+      "yaw": 1.5707963267948966,
+      "length": 0.721007259239893,
+      "width": 0.721007259239893,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_barrier",
+      "type": "barrier",
+      "x": 57.44481473310679,
+      "z": 22.780012937008664,
+      "yaw": 0.0,
+      "length": 1.486359448287201,
+      "width": 0.3963625195432536,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_equipment_cart",
+      "type": "equipment_cart",
+      "x": 11.975741786082597,
+      "z": 4.001451455092164,
+      "yaw": 1.5707963267948966,
+      "length": 1.083267745774684,
+      "width": 0.6499606474648104,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 40.38877908029141,
+      "z": 14.515592426791045,
+      "yaw": -1.5707963267948966,
+      "length": 2.4253916557613544,
+      "width": 1.1260746973177718,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_barrier",
+      "type": "barrier",
+      "x": 49.556788139140764,
+      "z": 10.8035637588015,
+      "yaw": -0.29498248109476105,
+      "length": 1.4925043011585106,
+      "width": 0.39800114697560285,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_workstation",
+      "type": "workstation",
+      "x": 30.622902034018384,
+      "z": 18.2937416302103,
+      "yaw": 1.5707963267948966,
+      "length": 1.8163045636729513,
+      "width": 0.9081522818364757,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_equipment_cart",
+      "type": "equipment_cart",
+      "x": 54.24166890871775,
+      "z": 3.0173419420340863,
+      "yaw": -0.05799257428049745,
+      "length": 1.0089392779543271,
+      "width": 0.6053635667725963,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_9_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 44.0016660348138,
+      "z": 15.435091914834942,
+      "yaw": 0.0,
+      "length": 2.604846319977473,
+      "width": 1.2093929342752556,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

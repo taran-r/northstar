@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "role": "dataset_v2_additions",
+  "immutable_predecessor": "data/dataset_v1",
+  "facility_id": "industrial_facility_v1",
+  "facility_path": "facilities/industrial_facility_v1.json",
+  "coordinate_note": "Same XZ-horizontal facility and tensor schema as dataset_v1.",
+  "generalization_note": "Every scenario uses industrial_facility_v1. Held-out splits measure unseen obstacle configurations and routes inside this building, not a new building.",
+  "subgoal_policy": {
+    "subgoal": "May be the expert window endpoint when is_local=1. Not an inference input.",
+    "inference_goal": "Scenario global goal, stored in sample metadata. Safe at inference.",
+    "global_goal": "Scenario destination. Safe at inference."
+  },
+  "vehicle_params": {
+    "length": 1.3,
+    "width": 0.8,
+    "wheelbase": 1.0,
+    "max_speed": 2.5,
+    "min_speed": 0.0,
+    "max_steer": 0.55,
+    "max_accel": 1.5,
+    "max_decel": 2.5,
+    "max_steer_rate": 1.2,
+    "footprint_margin": 0.05
+  },
+  "horizon": 32,
+  "dt": 0.2,
+  "map_size_m": 20.0,
+  "map_resolution": 0.25,
+  "future_features": [
+    "x",
+    "z",
+    "yaw",
+    "speed",
+    "steering",
+    "accel",
+    "t_rel"
+  ],
+  "stats": {
+    "scenarios_ok": 1300,
+    "windows": 17443,
+    "attempts": 20275,
+    "failures": {
+      "ordinary_plan_failed": 3102,
+      "swept_static_collision": 556,
+      "dynamic_collision": 103,
+      "static_plan_failed": 297,
+      "open_loop_drift": 168,
+      "timed_follow_failed": 28,
+      "no_windows": 17,
+      "id_collision": 15517,
+      "near_duplicate": 42
+    },
+    "by_layout": {
+      "ordinary": 567,
+      "yield_cross": 299,
+      "detour": 219,
+      "mixed": 78,
+      "brake_oncoming": 137
+    },
+    "realized": {
+      "yielded": 661,
+      "braked": 556,
+      "meaningful": 700,
+      "detoured": 14
+    }
+  },
+  "elapsed_sec": 2.436863422393799,
+  "config": {
+    "out_dir": "data/dataset_v2_additions",
+    "v1_dir": "data/dataset_v1",
+    "n_scenarios": 1300,
+    "seed0": 8000000,
+    "dt": 0.2,
+    "horizon": 32,
+    "window_stride": 4,
+    "map_size_m": 20.0,
+    "map_resolution": 0.25,
+    "train_fraction": 0.8,
+    "val_fraction": 0.1,
+    "facility_path": "facilities/industrial_facility_v1.json",
+    "max_attempts_factor": 12,
+    "oracle_fraction": 0.1,
+    "use_time_aware": true
+  },
+  "splits": {
+    "train": 13722,
+    "val": 1583,
+    "test": 2138
+  },
+  "split_policy": {
+    "type": "scenario",
+    "test_preference": "meaningful dynamic interactions",
+    "train_excludes": "all v1 and v2 val/test"
+  },
+  "resume_command": "python scripts/generate_v2_additions.py --out data/dataset_v2_additions --n-scenarios 1300"
+}

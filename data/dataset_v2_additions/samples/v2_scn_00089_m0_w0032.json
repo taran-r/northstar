@@ -1,0 +1,43 @@
+{
+  "sample_id": "v2_scn_00089_m0_w0032",
+  "scenario_id": "v2_scn_00089",
+  "trajectory_id": "v2_scn_00089_m0",
+  "horizon": 32,
+  "dt": 0.2,
+  "ego0": {
+    "x": 49.155000151229046,
+    "z": 6.0937828863851164,
+    "yaw": 1.9923115398968396,
+    "speed": 1.7000000000000024,
+    "steering": -0.25,
+    "t": 6.4
+  },
+  "subgoal": {
+    "x": 39.274436950683594,
+    "z": 10.861529350280762,
+    "yaw": 2.8567850589752197,
+    "is_local": 1.0
+  },
+  "global_goal": {
+    "x": 24.76004807882732,
+    "z": 14.656588639449907,
+    "yaw": -1.5707963267948966
+  },
+  "oracle_dynamics": false,
+  "behavior_tag": "yield_intersection",
+  "mode_id": 0,
+  "metadata": {
+    "start_index": 32,
+    "map_size_m": 20.0,
+    "map_resolution": 0.25,
+    "pred_steps": 8,
+    "subgoal_source": "expert_window_endpoint",
+    "expert_subgoal_is_label": true,
+    "inference_goal": {
+      "x": 24.76004807882732,
+      "z": 14.656588639449907,
+      "yaw": -1.5707963267948966,
+      "source": "scenario_goal"
+    }
+  }
+}

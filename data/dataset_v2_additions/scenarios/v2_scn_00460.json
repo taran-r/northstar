@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00460",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 143779174,
+  "start": {
+    "x": 29.90450833306764,
+    "z": 13.483682810537587,
+    "yaw": 1.4482036965183358,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 31.519606336284134,
+    "z": 26.592128268880195,
+    "yaw": 1.5707963267948966,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_machinery",
+      "type": "machinery",
+      "x": 10.147842778325193,
+      "z": 8.29626043651786,
+      "yaw": 0.0,
+      "length": 2.117007785272516,
+      "width": 1.481905449690761,
+      "height": 1.8,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_shipping_container",
+      "type": "shipping_container",
+      "x": 41.794987941891364,
+      "z": 23.954655544248617,
+      "yaw": 0.02636262505702114,
+      "length": 2.8511853474256137,
+      "width": 1.4255926737128068,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_barrier",
+      "type": "barrier",
+      "x": 43.894055367307296,
+      "z": 20.339053416434233,
+      "yaw": 0.0,
+      "length": 1.711889837214006,
+      "width": 0.4565039565904016,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_crate",
+      "type": "crate",
+      "x": 49.98518242635993,
+      "z": 21.963006674643083,
+      "yaw": -0.2540862025764631,
+      "length": 0.8146418800813786,
+      "width": 0.8146418800813786,
+      "height": 0.9,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_4_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 37.52871489740999,
+      "z": 24.412386303124702,
+      "yaw": 1.5707963267948966,
+      "length": 3.139464926055786,
+      "width": 1.4576087156687578,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_5_parked_vehicle",
+      "type": "parked_vehicle",
+      "x": 52.13992320658003,
+      "z": 19.669184857785154,
+      "yaw": 0.2655708283736265,
+      "length": 2.6523867859067236,
+      "width": 1.2314652934566932,
+      "height": 1.6,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_6_workstation",
+      "type": "workstation",
+      "x": 19.29318497485967,
+      "z": 22.329285720596474,
+      "yaw": -1.5707963267948966,
+      "length": 1.9512728459521522,
+      "width": 0.9756364229760761,
+      "height": 1.4,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_7_barrier",
+      "type": "barrier",
+      "x": 57.90110991121978,
+      "z": 7.582389209172689,
+      "yaw": 3.141592653589793,
+      "length": 1.4653943130118006,
+      "width": 0.3907718168031469,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_8_barrier",
+      "type": "barrier",
+      "x": 41.9165096291756,
+      "z": 16.92415315847525,
+      "yaw": 0.0,
+      "length": 1.4937517609867936,
+      "width": 0.3983338029298117,
+      "height": 1.1,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}

@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "scenario_id": "v2_scn_00566",
+  "facility_id": "industrial_facility_v1",
+  "facility_schema_version": "1.0.0",
+  "seed": 146812151,
+  "start": {
+    "x": 54.82474239286456,
+    "z": 2.8040667152270418,
+    "yaw": 2.8817142814346934,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "goal": {
+    "x": 12.353619556166302,
+    "z": 14.096769237454156,
+    "yaw": 0.0,
+    "speed": 0.0,
+    "steering": 0.0,
+    "y": 0.0
+  },
+  "static_obstacles": [
+    {
+      "id": "static_0_equipment_cart",
+      "type": "equipment_cart",
+      "x": 25.178573713147692,
+      "z": 17.144707477200917,
+      "yaw": 1.5707963267948966,
+      "length": 1.0224929743508515,
+      "width": 0.6134957846105109,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_1_shipping_container",
+      "type": "shipping_container",
+      "x": 54.19953352563362,
+      "z": 9.132007621573878,
+      "yaw": 3.141592653589793,
+      "length": 2.7932226073321935,
+      "width": 1.3966113036660968,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_2_shipping_container",
+      "type": "shipping_container",
+      "x": 53.806537107175885,
+      "z": 22.731646892765323,
+      "yaw": 0.0,
+      "length": 3.3384776203581685,
+      "width": 1.6692388101790843,
+      "height": 2.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    },
+    {
+      "id": "static_3_equipment_cart",
+      "type": "equipment_cart",
+      "x": 46.13149475141996,
+      "z": 14.778338275248748,
+      "yaw": -1.5707963267948966,
+      "length": 1.1263985756456456,
+      "width": 0.6758391453873873,
+      "height": 1.0,
+      "y": 0.0,
+      "permanent": false,
+      "metadata": {}
+    }
+  ],
+  "dynamic_obstacles": [],
+  "metadata": {
+    "behavior_tag": "sharp_turn",
+    "multi_modal": false,
+    "requested_behaviors": [
+      "straight"
+    ],
+    "layout": "ordinary",
+    "realized": {
+      "layout": "ordinary",
+      "yielded": false,
+      "braked": false,
+      "detoured": false,
+      "meaningful": false,
+      "predicted_route_conflict": false,
+      "observed_gt_conflict": false,
+      "min_separation_m": Infinity,
+      "path_deviation_m": 0.0,
+      "oracle_dynamics": false
+    }
+  },
+  "oracle_dynamics": false
+}
