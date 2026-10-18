@@ -397,6 +397,44 @@ def _recover_command(
     return best_bad, False, best_bad_slack
 
 
+def _release_creep(
+    state: VehicleState,
+    u_raw: np.ndarray,
+    u_safe: np.ndarray,
+    lo: np.ndarray,
+    hi: np.ndarray,
+    evaluate,
+    config: CBFConfig,
+) -> Optional[np.ndarray]:
+    """Return a slow feasible command when the brake is holding a stopped rover.
+
+    The program is linearized around the tracker's acceleration. From a stop
+    that cut often leaves only the brake, including when a small acceleration
+    at the commanded steering stays inside the same backup tolerance. The
+    bicycle cannot yaw while speed is held at zero, so the rover sits on the
+    ribbon and the replan flag chatters. The returned command is one the
+    rollout already used by the program accepts. ``None`` leaves the brake.
+    """
+    if state.speed > 0.8:
+        return None
+    if float(u_safe[0]) > 0.05 or float(u_raw[0]) <= 0.2:
+        return None
+    steers = _unique_steers(
+        [float(u_raw[1]), float(u_safe[1]), float(lo[1]), float(hi[1])],
+        float(lo[1]),
+        float(hi[1]),
+    )
+    for accel in (0.22, 0.12):
+        capped = min(float(accel), float(hi[0]))
+        if capped <= 0.05:
+            continue
+        for steer in steers:
+            candidate = np.array([capped, steer], dtype=np.float64)
+            if _min_slack(evaluate(candidate)[0]) >= -config.violation_tol:
+                return candidate
+    return None
+
+
 def _persistent_forward_block(
     state: VehicleState,
     scene: SafetyScene,
@@ -562,6 +600,14 @@ def filter_control(
                 infeasible = True
                 fallback = "max_brake"
                 status = "infeasible_fallback"
+
+    creep = _release_creep(state, u_raw, u_safe, lo, hi, evaluate, config)
+    if creep is not None:
+        u_safe = creep
+        safe_backup = _min_slack(evaluate(creep)[0])
+        infeasible = False
+        fallback = ""
+        status = "creep"
 
     min_clearance, closing, nearest = instantaneous_clearance(state, obstacles, params)
     replan = False

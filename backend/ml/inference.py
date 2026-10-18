@@ -209,6 +209,7 @@ class FlowMatchingPlanner:
         num_steps: int = DEFAULT_SOLVER_STEPS,
         seed: int = 0,
         solver: str = DEFAULT_SOLVER,
+        record_flow: bool = False,
     ) -> PlanResult:
         """Plan from raw rover state and occupancy, returning candidates plus
         diagnostics.
@@ -242,6 +243,7 @@ class FlowMatchingPlanner:
             dynamic = np.stack(pooled).astype(np.float32)
 
         started = time.perf_counter()
+        flow: list[tuple[float, np.ndarray]] | None = [] if record_flow else None
         candidates = self.generate(
             occupancy,
             goal_local,
@@ -254,6 +256,7 @@ class FlowMatchingPlanner:
             solver=solver,
             dynamic=dynamic,
             ego_yaw=ego_yaw,
+            flow_snapshots=flow,
         )
         elapsed_ms = (time.perf_counter() - started) * 1000.0
 
@@ -271,6 +274,7 @@ class FlowMatchingPlanner:
             solver_steps=num_steps,
             seed=seed,
             dt=float(self.schema["dt"]),
+            flow=flow,
         )
 
     def _decode(self, normalized: torch.Tensor) -> np.ndarray:
@@ -293,6 +297,7 @@ class FlowMatchingPlanner:
         solver: str = DEFAULT_SOLVER,
         dynamic: np.ndarray | None = None,
         ego_yaw: float = 0.0,
+        flow_snapshots: list | None = None,
     ) -> list[Candidate]:
         if solver not in SOLVERS:
             raise ValueError(f"solver must be one of {SOLVERS}, got {solver!r}")
@@ -338,6 +343,9 @@ class FlowMatchingPlanner:
         )
 
         step = 1.0 / num_steps
+        if flow_snapshots is not None:
+            flow_snapshots.append((0.0, self._decode(z).copy()))
+        recorded_mid = False
         for index in range(num_steps):
             t = torch.full((num_candidates,), index * step, device=self.device)
             velocity = self.model(z, t, occupancy_batch, cond_batch, dynamic_batch)
@@ -353,8 +361,14 @@ class FlowMatchingPlanner:
                     dynamic_batch,
                 )
                 z = z + step * 0.5 * (velocity + probe)
+            done = (index + 1) * step
+            if flow_snapshots is not None and not recorded_mid and done >= 0.5:
+                flow_snapshots.append((float(done), self._decode(z).copy()))
+                recorded_mid = True
 
         decoded = self._decode(z)
+        if flow_snapshots is not None:
+            flow_snapshots.append((1.0, decoded.copy()))
         dt = float(self.schema.get("dt", DT))
         return [
             Candidate(trajectory=decoded[i], seed=seed, index=i, dt=dt)
@@ -489,6 +503,7 @@ class PlanResult:
     solver_steps: int
     seed: int
     dt: float
+    flow: list | None = None
 
     @property
     def dynamically_feasible(self) -> list[Candidate]:

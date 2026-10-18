@@ -46,6 +46,8 @@ class TrajectoryTracker:
         cruise_speed: float = 1.6,
         lookahead: float = 1.5,
         steer_gain: float = 1.7,
+        turn_speed: float = 0.8,
+        turn_slow_angle: float = 0.7,
     ):
         self.params = params or VehicleParams()
         self.points = polyline_from_points(waypoints)
@@ -55,6 +57,8 @@ class TrajectoryTracker:
         self.cruise_speed = cruise_speed
         self.lookahead = lookahead
         self.steer_gain = steer_gain
+        self.turn_speed = turn_speed
+        self.turn_slow_angle = turn_slow_angle
 
     def closest_s(self, state: VehicleState) -> float:
         if len(self.points) == 1:
@@ -86,8 +90,8 @@ class TrajectoryTracker:
         yaw_err = wrap_angle(desired - state.yaw)
         steer = float(np.clip(self.steer_gain * yaw_err, -params.max_steer, params.max_steer))
         v_tgt = min(self.cruise_speed, math.sqrt(max(0.0, 2.0 * params.max_decel * remain)))
-        if abs(yaw_err) > 0.7:
-            v_tgt = min(v_tgt, 0.8)
+        if abs(yaw_err) > self.turn_slow_angle:
+            v_tgt = min(v_tgt, self.turn_speed)
         if remain < 0.35:
             v_tgt = 0.0
         accel = (v_tgt - state.speed) / max(dt, 1e-3)

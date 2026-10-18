@@ -118,8 +118,24 @@ def test_python_mirror_matches_the_typescript_schema():
 
     frame_block = re.search(r"StateFrame\s*=\s*\{(.*?)\n\};", source, re.S)
     assert frame_block is not None
-    fields = set(re.findall(r"^\s*([a-z_]+)\??:", frame_block.group(1), re.M))
-    assert fields == set(_frame())
+    block = frame_block.group(1)
+    required = set(re.findall(r"^\s*([a-z_]+):", block, re.M))
+    optional = set(re.findall(r"^\s*([a-z_]+)\?:", block, re.M))
+    assert required.isdisjoint(optional)
+    assert required == set(_frame())
+    full = _frame(
+        flow=[
+            {
+                "t": 0.0,
+                "index": 0,
+                "selected": True,
+                "points": [{"x": 0.0, "y": 0.0}, {"x": 1.0, "y": 0.0}],
+            }
+        ],
+        conditioning={"size": 2, "facility": [0, 1, 0, 1], "static": [1, 0, 0, 0]},
+    )
+    assert required | optional == set(full)
+    assert validate_frame(full) == []
 
 
 def test_rover_state_maps_dataset_xz_to_backend_xy():

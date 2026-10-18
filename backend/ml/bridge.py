@@ -254,7 +254,7 @@ def state_frame(
     sim_time: float,
     seed: int,
     state: VehicleState,
-    goal_xz: tuple[float, float],
+    goal_xz: tuple[float, float] | None,
     obstacles: list[dict],
     candidate_paths: list[list[dict]],
     selected_path: list[dict],
@@ -262,16 +262,22 @@ def state_frame(
     trail: list[dict],
     controller: dict,
     metrics: dict,
+    flow: list | None = None,
+    conditioning: dict | None = None,
 ) -> dict:
-    goal_x, goal_y = _xy(goal_xz[0], goal_xz[1])
-    return {
+    if goal_xz is None:
+        goal = None
+    else:
+        goal_x, goal_y = _xy(goal_xz[0], goal_xz[1])
+        goal = [goal_x, goal_y, 0.0]
+    frame = {
         "type": "state",
         "version": SCHEMA_VERSION,
         "tick": tick,
         "sim_time": float(sim_time),
         "seed": seed,
         "rover": rover_state(state),
-        "goal": [goal_x, goal_y, 0.0],
+        "goal": goal,
         "obstacles": obstacles,
         "candidate_paths": candidate_paths,
         "selected_path": selected_path,
@@ -281,6 +287,11 @@ def state_frame(
         "metrics": metrics,
         "measured": True,
     }
+    if flow:
+        frame["flow"] = flow
+    if conditioning:
+        frame["conditioning"] = conditioning
+    return frame
 
 
 def _body_clearance(state: VehicleState, scene, params: VehicleParams) -> float:
@@ -615,7 +626,53 @@ def validate_frame(frame: dict) -> list[str]:
         "executed_trail", "controller", "metrics", "measured",
     }
     missing = expected - set(frame)
-    undeclared = set(frame) - expected
+    undeclared = set(frame) - expected - {"flow", "conditioning"}
+    flow = frame.get("flow", "absent")
+    if flow != "absent":
+        if not isinstance(flow, list):
+            problems.append("flow: expected a list")
+        else:
+            for index, curve in enumerate(flow):
+                where = f"flow[{index}]"
+                if not isinstance(curve, dict):
+                    problems.append(f"{where}: expected object")
+                    continue
+                if not isinstance(curve.get("t"), (int, float)):
+                    problems.append(f"{where}.t: non-numeric")
+                if not isinstance(curve.get("index"), int):
+                    problems.append(f"{where}.index: expected int")
+                if not isinstance(curve.get("selected"), bool):
+                    problems.append(f"{where}.selected: expected bool")
+                points = curve.get("points")
+                if not isinstance(points, list):
+                    problems.append(f"{where}.points: expected list")
+                else:
+                    for point in points:
+                        if not isinstance(point, dict) or not isinstance(
+                            point.get("x"), (int, float)
+                        ) or not isinstance(point.get("y"), (int, float)):
+                            problems.append(f"{where}.points: expected {{x, y}}")
+                            break
+    conditioning = frame.get("conditioning", "absent")
+    if conditioning != "absent":
+        if not isinstance(conditioning, dict):
+            problems.append("conditioning: expected object")
+        else:
+            size = conditioning.get("size")
+            extra = set(conditioning) - {"size", "facility", "static"}
+            if extra:
+                problems.append(f"conditioning: undeclared {sorted(extra)}")
+            if not isinstance(size, int) or isinstance(size, bool) or not 1 <= size <= 48:
+                problems.append("conditioning.size: expected int")
+            else:
+                for key in ("facility", "static"):
+                    cells = conditioning.get(key)
+                    if (
+                        not isinstance(cells, list)
+                        or len(cells) != size * size
+                        or any(cell not in (0, 1) or isinstance(cell, bool) for cell in cells)
+                    ):
+                        problems.append(f"conditioning.{key}: expected {size * size} cells of 0/1")
     if missing:
         problems.append(f"frame: missing {sorted(missing)}")
     if undeclared:

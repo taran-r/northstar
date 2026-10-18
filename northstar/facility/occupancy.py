@@ -78,14 +78,25 @@ class OccupancyGrid:
         oz = center_z - half
         n = max(1, int(round(size_m / self.resolution)))
         out = OccupancyGrid(ox, oz, self.resolution, n, n)
-        for gz in range(n):
-            for gx in range(n):
-                wx, wz = out.grid_to_world(gx, gz)
-                sgx, sgz = self.world_to_grid(wx, wz)
-                if self.in_bounds(sgx, sgz):
-                    out.data[gz, gx] = self.data[sgz, sgx]
-                else:
-                    out.data[gz, gx] = 1.0
+        # Same sampling as the old per-cell loop: cell centres, then truncate
+        # toward zero (Python int), and treat out-of-map cells as occupied.
+        idx = np.arange(n, dtype=np.float64)
+        wx = ox + (idx + 0.5) * self.resolution
+        wz = oz + (idx + 0.5) * self.resolution
+        sgx = np.trunc((wx - self.origin_x) / self.resolution).astype(np.int64)
+        sgz = np.trunc((wz - self.origin_z) / self.resolution).astype(np.int64)
+        sgx_grid = np.broadcast_to(sgx, (n, n))
+        sgz_grid = np.broadcast_to(sgz[:, None], (n, n))
+        valid = (
+            (sgx_grid >= 0)
+            & (sgx_grid < self.width)
+            & (sgz_grid >= 0)
+            & (sgz_grid < self.height)
+        )
+        safe_x = np.clip(sgx_grid, 0, max(self.width - 1, 0))
+        safe_z = np.clip(sgz_grid, 0, max(self.height - 1, 0))
+        sampled = self.data[safe_z, safe_x]
+        out.data[:, :] = np.where(valid, sampled, 1.0)
         return out
 
 

@@ -32,8 +32,11 @@ from typing import Iterator
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.ml.bridge import SCHEMA_VERSION, episode, validate_frame
+from backend.ml.bridge import FACILITY_PATH, SCHEMA_VERSION, episode, validate_frame
 from backend.ml.inference import FlowMatchingPlanner
+from backend.ml.hall import HALL_GOAL_X, HALL_GOAL_Z
+from backend.ml.interactive import HALL_PACE, InteractiveSim
+from northstar.facility.loader import load_facility
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS = ROOT / "backend" / "artifacts"
@@ -137,6 +140,7 @@ class Session:
     use_cbf: bool = True
     seed: int = 0
     paced: bool = False
+    sim: InteractiveSim | None = None
 
     def running(self) -> bool:
         return self.worker is not None and self.worker.is_alive()
@@ -221,6 +225,61 @@ def replays() -> dict:
     return {"replays": list_replays()}
 
 
+def facility_payload() -> dict:
+    """Walls, columns and machinery in the backend frame.
+
+    Dataset horizontal Z is backend Y. The frontend converts with the one
+    helper in `scene/coords`, so this payload does not pre-transform.
+    """
+    spec = load_facility(FACILITY_PATH)
+    return {
+        "facility_id": spec.facility_id,
+        "width_x": spec.dimensions["width_x"],
+        "depth_y": spec.dimensions["depth_z"],
+        "height_z": spec.dimensions.get("height_y", 6.0),
+        "walls": [
+            {
+                "id": wall.id,
+                "x1": wall.x1,
+                "y1": wall.z1,
+                "x2": wall.x2,
+                "y2": wall.z2,
+                "thickness": wall.thickness,
+                "height": wall.height,
+            }
+            for wall in spec.walls
+        ],
+        "columns": [
+            {
+                "id": column.id,
+                "x": column.x,
+                "y": column.z,
+                "radius": column.radius,
+                "height": column.height,
+            }
+            for column in spec.columns
+        ],
+        "permanent": [
+            {
+                "id": obj.id,
+                "kind": obj.type,
+                "x": obj.x,
+                "y": obj.z,
+                "yaw": obj.yaw,
+                "length": obj.length,
+                "width": obj.width,
+                "height": obj.height,
+            }
+            for obj in spec.permanent_objects
+        ],
+    }
+
+
+@app.get("/facility")
+def facility() -> dict:
+    return facility_payload()
+
+
 @app.get("/metrics")
 def metrics() -> dict:
     """Measured safety-off/on comparison, or nulls when no runs are logged.
@@ -263,6 +322,62 @@ def start_live(session: Session, name: str, duration_s: float):
     session.launch(produce)
 
 
+def start_interactive(session: Session, seed: int):
+    """Live facility session. A missing checkpoint is reported, not faked."""
+    loaded = None
+    if DEFAULT_CHECKPOINT.exists():
+        loaded = planner()
+    sim = InteractiveSim(
+        planner=loaded, seed=seed, use_cbf=session.use_cbf, async_plan=True, pace=HALL_PACE
+    )
+    session.sim = sim
+
+    def produce():
+        return sim.frames()
+
+    session.paced = False
+    session.launch(produce)
+    return loaded is not None
+
+
+def start_hall(session: Session, seed: int, obstacles: list, goal: dict | None):
+    """The drawn aisle, with the same model and safety filter as the facility."""
+    loaded = None
+    if DEFAULT_CHECKPOINT.exists():
+        loaded = planner()
+    sim = InteractiveSim(
+        planner=loaded,
+        seed=seed,
+        layout="hall",
+        async_plan=True,
+        pace=HALL_PACE,
+        use_cbf=True,
+    )
+    sim.use_cbf = True
+    session.sim = sim
+    target = goal or {}
+    sim.try_goal(
+        float(target.get("x", HALL_GOAL_X)),
+        float(target.get("y", HALL_GOAL_Z)),
+    )
+    for item in obstacles:
+        if not isinstance(item, dict):
+            continue
+        sim.place_obstacle(
+            str(item.get("kind", "")),
+            float(item.get("x", 0.0)),
+            float(item.get("y", 0.0)),
+            float(item.get("yaw", 0.0)),
+        )
+
+    def produce():
+        return sim.frames()
+
+    session.paced = False
+    session.launch(produce)
+    return loaded is not None
+
+
 def start_replay(session: Session, policy_mode: str):
     matches = [r for r in list_replays() if r["policy_mode"] == policy_mode]
     if not matches:
@@ -289,9 +404,12 @@ async def socket_endpoint(socket: WebSocket) -> None:
             "scenarios": list_scenarios(limit=12),
             "replays": list_replays(),
             "intents": [
-                "start", "pause", "resume", "step", "reset",
-                "toggle_safety", "start_replay",
+                "start", "start_interactive", "start_hall", "pause", "resume", "step", "reset",
+                "toggle_safety", "start_replay", "set_goal", "spawn_obstacle",
+                "remove_obstacle", "clear_obstacles",
             ],
+            "checkpoint_present": DEFAULT_CHECKPOINT.exists(),
+            "checkpoint": DEFAULT_CHECKPOINT.name if DEFAULT_CHECKPOINT.exists() else None,
         }
     )
 
@@ -310,7 +428,85 @@ async def socket_endpoint(socket: WebSocket) -> None:
             if kind == "start":
                 name = intent.get("scenario") or list_scenarios(limit=1)[0]
                 duration = float(intent.get("duration_s", 45.0))
+                session.sim = None
                 await restart(lambda: start_live(session, name, duration))
+
+            elif kind == "start_interactive":
+                session.seed = int(intent.get("seed", session.seed))
+                ready = {"neural": False}
+
+                def launch_interactive() -> None:
+                    ready["neural"] = start_interactive(session, session.seed)
+
+                await restart(launch_interactive)
+                await socket.send_json(
+                    {
+                        "type": "ack",
+                        "intent": kind,
+                        "neural": ready["neural"],
+                        "checkpoint": DEFAULT_CHECKPOINT.name if ready["neural"] else None,
+                    }
+                )
+
+            elif kind == "start_hall":
+                session.seed = int(intent.get("seed", session.seed))
+                ready = {"neural": False}
+                obstacles = intent.get("obstacles") or []
+                goal = intent.get("goal") if isinstance(intent.get("goal"), dict) else None
+
+                def launch_hall() -> None:
+                    ready["neural"] = start_hall(session, session.seed, obstacles, goal)
+
+                await restart(launch_hall)
+                await socket.send_json(
+                    {
+                        "type": "ack",
+                        "intent": kind,
+                        "neural": ready["neural"],
+                        "checkpoint": DEFAULT_CHECKPOINT.name if ready["neural"] else None,
+                    }
+                )
+
+            elif kind == "set_goal":
+                if session.sim is None:
+                    await socket.send_json(
+                        {"type": "ack", "intent": kind, "accepted": False, "handled": False}
+                    )
+                else:
+                    accepted = session.sim.try_goal(
+                        float(intent.get("x", 0.0)), float(intent.get("y", 0.0))
+                    )
+                    await socket.send_json(
+                        {"type": "ack", "intent": kind, "accepted": accepted}
+                    )
+
+            elif kind == "spawn_obstacle":
+                if session.sim is None:
+                    await socket.send_json(
+                        {"type": "ack", "intent": kind, "accepted": False, "handled": False}
+                    )
+                else:
+                    accepted = session.sim.try_spawn(
+                        str(intent.get("kind", "")),
+                        float(intent.get("x", 0.0)),
+                        float(intent.get("y", 0.0)),
+                        float(intent.get("yaw", 0.0)),
+                    )
+                    await socket.send_json(
+                        {"type": "ack", "intent": kind, "accepted": accepted}
+                    )
+
+            elif kind == "remove_obstacle":
+                if session.sim is not None:
+                    session.sim.submit(
+                        {"type": "remove_obstacle", "id": str(intent.get("id", ""))}
+                    )
+                await socket.send_json({"type": "ack", "intent": kind})
+
+            elif kind == "clear_obstacles":
+                if session.sim is not None:
+                    session.sim.submit({"type": "clear_obstacles"})
+                await socket.send_json({"type": "ack", "intent": kind})
 
             elif kind == "start_replay":
                 session.seed = int(intent.get("seed", session.seed))
@@ -332,6 +528,10 @@ async def socket_endpoint(socket: WebSocket) -> None:
 
             elif kind == "toggle_safety":
                 session.use_cbf = bool(intent.get("enabled", True))
+                if session.sim is not None:
+                    session.sim.submit(
+                        {"type": "toggle_safety", "enabled": session.use_cbf}
+                    )
                 await socket.send_json(
                     {"type": "ack", "intent": kind, "use_cbf": session.use_cbf}
                 )
