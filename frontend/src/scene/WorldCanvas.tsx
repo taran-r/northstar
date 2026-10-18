@@ -6,7 +6,15 @@ import { Hall } from './Hall';
 import { Rover } from './Rover';
 import { Forklift } from './Forklift';
 import { PathRibbons, WheelTrail, pathPoints } from './Paths';
-import { AttentionTiles, ContactMark, GoalMarker, HazardBand, SafetyRing } from './Markers';
+import {
+  AttentionTiles,
+  ContactMark,
+  GoalCelebration,
+  GoalMarker,
+  HazardBand,
+  SafetyRing,
+} from './Markers';
+import { useReducedMotion } from '../hooks/useMediaQuery';
 import { Obstacles, type Obstacle } from './Obstacles';
 import { MovingForklift } from './MovingForklift';
 import { CROSSING_FORKLIFT, type AgentPose } from './agents';
@@ -253,6 +261,36 @@ function DrivenRig({
   return null;
 }
 
+const HOP_S = 1.2;
+
+/** A few settling hops when the rover arrives; flat when motion is reduced. */
+function CelebrationHop({
+  active,
+  lift,
+  children,
+}: {
+  active: boolean;
+  lift: number;
+  children: React.ReactNode;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const start = useRef<number | null>(null);
+  const still = useReducedMotion();
+  useFrame(({ clock }) => {
+    const g = group.current;
+    if (!g) return;
+    if (!active || still) {
+      start.current = null;
+      g.position.y = 0;
+      return;
+    }
+    if (start.current == null) start.current = clock.elapsedTime;
+    const t = clock.elapsedTime - start.current;
+    g.position.y = t < HOP_S ? lift * Math.abs(Math.sin(t * Math.PI * 2.5)) * (1 - t / HOP_S) : 0;
+  });
+  return <group ref={group}>{children}</group>;
+}
+
 function DriveTrail({ track, pose }: { track: Track; pose: React.RefObject<Pose> }) {
   const [travelled, setTravelled] = useState(0);
   const last = useRef(0);
@@ -318,6 +356,8 @@ export type WorldProps = {
   /** Live forklift poses from the bridge (placed patrols + hall crossing). */
   agents?: DrivenPose[];
   ring?: 'ok' | 'warn' | 'stop';
+  /** The backend reported the goal reached: play the arrival animation. */
+  celebrate?: boolean;
   facility?: FacilityGeometry | null;
   focus?: Pt | null;
   onFloorClick?: (p: Pt) => void;
@@ -350,6 +390,7 @@ function WorldCanvasImpl({
   driven = null,
   agents = [],
   ring = 'ok',
+  celebrate = false,
   facility = null,
   focus = null,
   onFloorClick,
@@ -519,6 +560,8 @@ function WorldCanvasImpl({
 
   const ringRadius = isSetup ? 3.4 : cameraMode === 'course' ? 4.6 : 2.1;
   const goalRadius = isSetup ? 2.8 : cameraMode === 'course' ? 3.2 : 1.4;
+  const roverScale = isSetup ? 2.6 : cameraMode === 'course' ? 3.2 : 1.5;
+  const beacon = celebrate ? '#4CAF7D' : scene.beacon;
 
   return (
     <div className={className ?? 'absolute inset-0'}>
@@ -632,29 +675,25 @@ function WorldCanvasImpl({
           cursor={scene.cursor}
         />
       )}
+      {celebrate && scene.goal && (
+        <GoalCelebration
+          position={[scene.goal.x, 0.03, scene.goal.z]}
+          radius={goalRadius}
+        />
+      )}
       {scene.contact && <ContactMark position={[scene.contact.x, 0.05, scene.contact.z]} />}
 
       <LabelTracker labels={worldLabels} nodes={labelNodes.current} />
 
       {driving || liveDrive ? (
         <group ref={roverGroup}>
-          <Rover
-            x={0}
-            z={0}
-            yaw={0}
-            beacon={scene.beacon}
-            scale={isSetup ? 2.6 : cameraMode === 'course' ? 3.2 : 1.5}
-          />
+          <CelebrationHop active={celebrate} lift={0.3 * roverScale}>
+            <Rover x={0} z={0} yaw={0} beacon={beacon} scale={roverScale} />
+          </CelebrationHop>
           <SafetyRing position={[0, 0.03, 0]} state={scene.ring} radius={ringRadius} />
         </group>
       ) : (
-        <Rover
-          x={rover.x}
-          z={rover.z}
-          yaw={rover.yaw}
-          beacon={scene.beacon}
-          scale={isSetup ? 2.6 : cameraMode === 'course' ? 3.2 : 1.5}
-        />
+        <Rover x={rover.x} z={rover.z} yaw={rover.yaw} beacon={beacon} scale={roverScale} />
       )}
       {liveDrive &&
         agents.map((pose, i) => (

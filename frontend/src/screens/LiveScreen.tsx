@@ -162,6 +162,7 @@ export function LiveScreen() {
         focus={focus}
         driven={driven}
         ring={ring}
+        celebrate={mode === 'goal'}
         goalPoint={goal}
         route={route}
         candidates={candidates}

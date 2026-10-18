@@ -147,6 +147,78 @@ export function GoalMarker({
   );
 }
 
+const BURST_RINGS = 3;
+const BURST_GAP_S = 0.28;
+const BURST_S = 1.4;
+
+/** One-shot arrival burst over the goal. Mount it when the goal is reached. */
+export function GoalCelebration({
+  position,
+  radius = 1.4,
+}: {
+  position: [number, number, number];
+  radius?: number;
+}) {
+  const rings = useRef<(THREE.Mesh | null)[]>([]);
+  const beam = useRef<THREE.Mesh>(null);
+  const light = useRef<THREE.PointLight>(null);
+  const start = useRef<number | null>(null);
+  const still = useReducedMotion();
+
+  useFrame(({ clock }) => {
+    if (start.current == null) start.current = clock.elapsedTime;
+    const t = still ? 10 : clock.elapsedTime - start.current;
+    rings.current.forEach((m, i) => {
+      if (!m) return;
+      const u = clamp((t - i * BURST_GAP_S) / BURST_S, 0, 1);
+      m.visible = u > 0 && u < 1;
+      m.scale.setScalar(1 + u * 3);
+      (m.material as THREE.MeshBasicMaterial).opacity = 0.9 * (1 - u) * (1 - u);
+    });
+    // Flash, then settle to a steady "locked in" glow.
+    const flash = Math.exp(-t * 1.6);
+    if (beam.current) {
+      (beam.current.material as THREE.MeshBasicMaterial).opacity = 0.32 + 0.5 * flash;
+    }
+    if (light.current) light.current.intensity = 8 + 30 * flash;
+  });
+
+  return (
+    <group position={position}>
+      {Array.from({ length: BURST_RINGS }, (_, i) => (
+        <mesh
+          key={i}
+          ref={(m) => {
+            rings.current[i] = m;
+          }}
+          rotation={FLAT}
+          position={[0, 0.006 + i * 0.001, 0]}
+          visible={false}
+        >
+          <ringGeometry args={[radius - 0.09, radius, 64]} />
+          <meshBasicMaterial color="#7FE0A8" transparent opacity={0} depthWrite={false} />
+        </mesh>
+      ))}
+      <mesh rotation={FLAT} position={[0, 0.005, 0]}>
+        <ringGeometry args={[radius * 1.08, radius * 1.16, 64]} />
+        <meshBasicMaterial color="#4CAF7D" transparent opacity={0.9} depthWrite={false} />
+      </mesh>
+      <mesh ref={beam} position={[0, 4, 0]}>
+        <cylinderGeometry args={[radius * 0.18, radius * 0.4, 8, 20, 1, true]} />
+        <meshBasicMaterial
+          color="#7FE0A8"
+          transparent
+          opacity={0.4}
+          side={THREE.DoubleSide}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+      <pointLight ref={light} position={[0, 1.6, 0]} color="#7FE0A8" intensity={8} distance={14} decay={2} />
+    </group>
+  );
+}
+
 export function HazardBand({ z, x0, x1 }: { z: number; x0: number; x1: number }) {
   return (
     <mesh position={[(x0 + x1) / 2, 0.016, z]} rotation={FLAT}>

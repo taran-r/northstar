@@ -530,3 +530,128 @@ def test_no_network_still_labels_hybrid_fallback():
     assert frame["controller"]["source"] == "fallback"
     assert frame["candidate_paths"] == []
     assert len(frame["fallback_paths"]) >= 2
+
+
+def test_hall_floor_props_outside_the_lane_are_solid():
+    from backend.ml.hall import hall_props
+    from northstar.control.scene import build_scene
+
+    sim = InteractiveSim(planner=None, dynamics=[], layout="hall")
+    props = hall_props()
+    kinds = {p.type for p in props}
+    assert {"column", "guard", "pallet", "crates", "tote"} <= kinds
+    grid = sim.base_static
+    for prop in props:
+        assert grid.is_occupied(prop.x, prop.z), prop.id
+        # A corner, not just the centre: the column base sticks out past the
+        # circle. Cells are painted by centre, so inset just over half a cell.
+        inset = 0.6 * grid.resolution
+        corner_x = prop.x + 0.5 * prop.length - inset
+        corner_z = prop.z + 0.5 * prop.width - inset
+        assert grid.is_occupied(corner_x, corner_z), prop.id
+    scene = build_scene(0.0, facility=sim.facility, static_obstacles=[], dynamic_obstacles=[])
+    scene_ids = {obs.id for obs in scene.obstacles()}
+    for prop in props:
+        assert any(prop.id in sid for sid in scene_ids), prop.id
+
+
+def test_hall_goal_on_a_pallet_stack_is_rejected():
+    from backend.ml.hall import HALL_PALLETS, scene_to_dataset
+
+    sim = InteractiveSim(planner=None, dynamics=[], layout="hall")
+    x, z_scene, _ = HALL_PALLETS[0]
+    assert sim.try_goal(*scene_to_dataset(x, z_scene)) is False
+
+
+def test_hall_rover_goes_around_a_pallet_stack_not_through_it():
+    import math
+
+    from backend.ml.hall import scene_to_dataset
+    from northstar.vehicle.bicycle import VehicleState
+
+    sim = InteractiveSim(planner=None, dynamics=[], layout="hall", async_plan=False)
+    # Beside the west pallets at scene z~31, heading +scene z, goal beyond them.
+    sx, sz = scene_to_dataset(-9.6, 25.0)
+    sim.state = VehicleState(x=sx, z=sz, yaw=-math.pi / 2, speed=0.0, steering=0.0, t=0.0)
+    assert sim.try_goal(*scene_to_dataset(-9.6, 38.0))
+    frame = None
+    for _ in range(160):
+        frame = sim.step()
+        if frame["metrics"]["goal_reached"]:
+            break
+    assert frame is not None
+    assert frame["metrics"]["collisions"] == 0
+    assert frame["metrics"]["min_clearance"] > 0.0
+
+
+def _pinned_sim(behind_x=None):
+    """Rover parked nose-first ~0.5 m from a barrier, inside its turning radius."""
+    sim = InteractiveSim(planner=None, dynamics=[])
+    assert sim.place_obstacle("barrier", 5.45, 14.0, yaw=np.pi / 2)
+    if behind_x is not None:
+        assert sim.place_obstacle("barrier", behind_x, 14.0, yaw=np.pi / 2)
+    sim.step()
+    return sim
+
+
+def test_rover_pinned_nose_first_backs_out_and_arrives():
+    # Forward-only, this sat on the start pose for 25 s across 30 replans.
+    sim = _pinned_sim()
+    assert sim.try_goal(12.0, 14.0)
+    frame = None
+    reversed_ = False
+    for _ in range(250):
+        frame = sim.step()
+        assert validate_frame(frame) == []
+        reversed_ = reversed_ or frame["rover"]["speed"] < -0.1
+        if frame["metrics"]["goal_reached"]:
+            break
+    assert frame is not None
+    assert reversed_
+    assert frame["metrics"]["goal_reached"] is True
+    assert frame["metrics"]["collisions"] == 0
+    assert frame["metrics"]["min_clearance"] > 0.0
+
+
+def test_reverse_recovery_does_not_back_into_a_body_behind():
+    # A second barrier ~0.5 m behind the tail: no room to back up either.
+    sim = _pinned_sim(behind_x=2.55)
+    assert sim.try_goal(12.0, 14.0)
+    frame = None
+    for _ in range(120):
+        frame = sim.step()
+        assert frame["controller"]["mode"] != "estop"
+    assert frame is not None
+    assert frame["metrics"]["collisions"] == 0
+    assert frame["metrics"]["min_clearance"] > -0.02
+
+
+def test_rover_waiting_on_a_forklift_does_not_reverse():
+    from backend.ml.interactive import STUCK_S
+
+    def stalled(dynamics):
+        sim = InteractiveSim(planner=None, dynamics=dynamics)
+        sim.goal = (12.0, 14.0)
+        s = sim.state
+        sim._stuck_anchor = (s.x, s.z, s.t - STUCK_S - 1.0)
+        sim._update_recovery(s)
+        return sim
+
+    # The lane forklift starts ~4 m from the rover: holding is yielding.
+    assert stalled(None).recovery is None
+    assert stalled([]).recovery is not None
+
+
+def test_reverse_command_into_a_wall_is_refused():
+    from backend.ml.interactive import _reverse_command_safe, _reverse_params
+    from northstar.control.scene import BoxObstacle, SafetyScene
+    from northstar.vehicle.bicycle import ControlInput, VehicleParams, VehicleState
+
+    params = _reverse_params(VehicleParams())
+    state = VehicleState(x=0.0, z=0.0, yaw=0.0, speed=0.0)
+    wall = BoxObstacle(id="wall", x=-1.3, z=0.0, yaw=0.0, length=0.4, width=4.0)
+    scene = SafetyScene(t=0.0, boxes=[wall], circles=[])
+    back = ControlInput(accel=-2.5, steer_cmd=0.0)
+    assert _reverse_command_safe(state, back, scene, 0.1, params) is False
+    clear = SafetyScene(t=0.0, boxes=[], circles=[])
+    assert _reverse_command_safe(state, back, clear, 0.1, params) is True

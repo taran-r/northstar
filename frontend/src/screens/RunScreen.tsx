@@ -189,6 +189,7 @@ export function RunScreen({
           driven={driven}
           agents={agents}
           ring={ring}
+          celebrate={arrived}
           onTick={liveBackend ? undefined : run.setProgress}
         />
       </div>

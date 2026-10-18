@@ -47,7 +47,7 @@ from backend.ml.dataset import world_to_local
 from backend.ml.evaluation import _vehicle_limits
 from backend.ml.inference import FlowMatchingPlanner, best_candidate
 from northstar.collision import CollisionChecker
-from northstar.control.cbf import CBFConfig
+from northstar.control.cbf import CBFConfig, _slacks
 from northstar.control.simulate import body_clearance, closed_loop_step
 from northstar.control.scene import BoxObstacle, CircleObstacle, SafetyScene, build_scene
 from northstar.control.tracking import TrajectoryTracker
@@ -61,7 +61,7 @@ from northstar.facility.schema import DynamicObject, DynamicWaypoint, StaticObje
 from northstar.geometry import OrientedBox
 from northstar.obstacles.dynamic import _interpolate_route
 from northstar.planner.hybrid_astar import HybridAStar, HybridAStarConfig
-from northstar.vehicle.bicycle import ControlInput, VehicleParams, VehicleState
+from northstar.vehicle.bicycle import BicycleModel, ControlInput, VehicleParams, VehicleState
 from backend.ml.hall import (
     FORKLIFT_HEIGHT,
     FORKLIFT_LENGTH,
@@ -145,6 +145,23 @@ HALL_CBF = CBFConfig(
 )
 # Hybrid A* only has to clear the blockage. The next replan asks the network again.
 FALLBACK_HORIZON_M = 9.0
+
+# Reverse recovery. Every planner here and the CBF filter are forward-only, and
+# the bicycle cannot yaw in place. A rover parked nose-first closer to a body
+# than its ~1.6 m turning radius had no forward command the filter would pass,
+# and replanning from the same pose returned the same blocked answer forever.
+# After a stall the session backs up a short way, steering so the nose swings
+# toward the goal (one leg of a three-point turn), then asks for a new route.
+STUCK_S = 3.0
+STUCK_MOVE_M = 0.35
+# A rover held behind a moving agent is yielding, not stuck.
+YIELD_RADIUS_M = 5.0
+REVERSE_SPEED = 0.6
+REVERSE_MAX_M = 1.6
+REVERSE_MAX_S = 4.0
+REVERSE_PREVIEW_S = 0.6
+REVERSE_STEER_SHARE = 0.85
+REVERSE_MARGIN = 0.12
 VIZ_GRID = 20
 
 # Footprints match Obstacles.tsx at OS=1.2, plus a small pad for the chase
@@ -463,6 +480,107 @@ def _route_blocked(
     return False
 
 
+def _reverse_params(params: VehicleParams) -> VehicleParams:
+    """The same vehicle with a reverse gear. Used only by the recovery maneuver."""
+    return VehicleParams(**{**params.to_dict(), "min_speed": -REVERSE_SPEED})
+
+
+def _reverse_command_safe(
+    state: VehicleState,
+    command: ControlInput,
+    scene: SafetyScene,
+    dt: float,
+    params: VehicleParams,
+) -> bool:
+    """Roll a reverse command forward, then a stop, against the perceived scene.
+
+    The CBF rollout brakes with ``-max_decel`` and stops at zero speed, which
+    is forward-only by construction, so it cannot certify a reverse. This check
+    is the backup idea applied in reverse: hold the command for a short
+    preview, stop, and require the inflated footprint to stay outside every
+    body. A body the nose is already too close to only has to get no closer.
+    No formal guarantee is claimed.
+    """
+    obstacles = scene.obstacles()
+    if not obstacles:
+        return True
+    model = BicycleModel(params)
+    floor = np.minimum(_slacks(state, obstacles, params, REVERSE_MARGIN), 0.0) - 1e-3
+    s = model.step(state, command, dt)
+    if np.any(_slacks(s, obstacles, params, REVERSE_MARGIN) < floor):
+        return False
+    roll_dt = 0.1
+    for _ in range(int(round(REVERSE_PREVIEW_S / roll_dt))):
+        s = model.step(s, command, roll_dt)
+        if np.any(_slacks(s, obstacles, params, REVERSE_MARGIN) < floor):
+            return False
+    taken = 0
+    while s.speed < -0.05 and taken < 20:
+        s = model.step(s, ControlInput(accel=params.max_accel, steer_cmd=s.steering), roll_dt)
+        taken += 1
+        if np.any(_slacks(s, obstacles, params, REVERSE_MARGIN) < floor):
+            return False
+    return True
+
+
+class ReverseRecovery:
+    """Back up a short distance, steering so the nose turns toward the goal.
+
+    With negative speed the bicycle yaws opposite to the steering angle, so
+    steering away from the goal bearing swings the nose toward it.
+    """
+
+    def __init__(self, state: VehicleState, goal: tuple[float, float], params: VehicleParams):
+        self.params = _reverse_params(params)
+        self.origin = (float(state.x), float(state.z))
+        self.started = float(state.t)
+        bearing = math.atan2(goal[1] - state.z, goal[0] - state.x)
+        error = math.atan2(math.sin(bearing - state.yaw), math.cos(bearing - state.yaw))
+        turn = 0.0 if abs(error) < 0.2 else -math.copysign(1.0, error)
+        steer = turn * REVERSE_STEER_SHARE * params.max_steer
+        self.steers = [steer, 0.0, -steer] if turn else [0.0]
+        self.backing = True
+
+    def done(self, state: VehicleState) -> bool:
+        return not self.backing and state.speed >= -0.05
+
+    def control(
+        self, state: VehicleState, scene: SafetyScene, dt: float
+    ) -> ControlInput:
+        travelled = math.hypot(state.x - self.origin[0], state.z - self.origin[1])
+        if self.backing and (
+            travelled >= REVERSE_MAX_M or state.t - self.started >= REVERSE_MAX_S
+        ):
+            self.backing = False
+        if self.backing:
+            accel = float(
+                np.clip(
+                    (-REVERSE_SPEED - state.speed) / max(dt, 1e-3),
+                    -self.params.max_decel,
+                    self.params.max_accel,
+                )
+            )
+            for steer in self.steers:
+                command = ControlInput(accel=accel, steer_cmd=steer)
+                if _reverse_command_safe(state, command, scene, dt, self.params):
+                    # Keep the steer that worked so the arc does not chatter.
+                    self.steers.remove(steer)
+                    self.steers.insert(0, steer)
+                    return command
+            # Nothing behind is clear: stop backing and let the planner try.
+            self.backing = False
+        if state.speed < -0.05:
+            accel = min(self.params.max_accel, -state.speed / max(dt, 1e-3))
+            return ControlInput(accel=accel, steer_cmd=state.steering)
+        return ControlInput(accel=0.0, steer_cmd=state.steering)
+
+    def step(self, state: VehicleState, command: ControlInput, dt: float) -> VehicleState:
+        nxt = BicycleModel(self.params).step(state, command, dt)
+        if not self.backing and -0.05 <= nxt.speed < 0.0:
+            nxt.speed = 0.0
+        return nxt
+
+
 class InteractiveSim:
     """One facility, one rover, commands applied between control steps."""
 
@@ -528,6 +646,10 @@ class InteractiveSim:
         self._shown_mode = "tracking"
         self._shown_until = 0.0
         self._stall_anchor: Optional[tuple[float, float, float]] = None
+        # Not reset by `_adopt`: a stuck rover replans every second, and a new
+        # ribbon on the same pose is not progress.
+        self._stuck_anchor: Optional[tuple[float, float, float]] = None
+        self.recovery: Optional[ReverseRecovery] = None
         self.arriving = False
         self.tick = 0
         self._static_dirty = True
@@ -951,6 +1073,8 @@ class InteractiveSim:
     ) -> bool:
         if self.goal is None or self.metrics.goal_reached or self.arriving:
             return False
+        if self.recovery is not None and not (goal_changed or obstacles_changed):
+            return False
         if goal_changed or obstacles_changed or self.tracker is None:
             return True
         if self._recovery_replan:
@@ -1068,15 +1192,27 @@ class InteractiveSim:
         )
         if self.layout == "hall":
             perceived = _closest_scene(perceived, state)
-        nxt, nominal, applied, diagnostics = closed_loop_step(
-            state,
-            self.tracker,
-            perceived,
-            self.control_dt,
-            params=self.params,
-            config=self.cbf_config,
-            use_cbf=True if self.layout == "hall" else self.use_cbf,
-        )
+        if self.recovery is not None and (
+            goal_changed or obstacles_changed or self.arriving or self.goal is None
+        ):
+            self.recovery.backing = False
+        if self.recovery is not None:
+            # The forward-only CBF cannot certify a reverse; the recovery
+            # checks its own command against the same perceived scene.
+            nominal = self.recovery.control(state, perceived, self.control_dt)
+            applied = nominal
+            diagnostics = None
+            nxt = self.recovery.step(state, applied, self.control_dt)
+        else:
+            nxt, nominal, applied, diagnostics = closed_loop_step(
+                state,
+                self.tracker,
+                perceived,
+                self.control_dt,
+                params=self.params,
+                config=self.cbf_config,
+                use_cbf=True if self.layout == "hall" else self.use_cbf,
+            )
         truth = build_scene(
             nxt.t,
             facility=self.facility,
@@ -1151,6 +1287,7 @@ class InteractiveSim:
             self.replan_hold_s += self.control_dt
         else:
             self.replan_hold_s = 0.0
+        self._update_recovery(nxt)
 
         self.metrics.travelled_m += float(
             math.hypot(nxt.x - state.x, nxt.z - state.z)
@@ -1163,7 +1300,9 @@ class InteractiveSim:
             self.trail = self.trail[-TRAIL_LIMIT:]
 
         mode = _display_mode(
-            diagnostics, self.metrics.goal_reached, replanned or self._planner_busy
+            diagnostics,
+            self.metrics.goal_reached,
+            replanned or self._planner_busy or self.recovery is not None,
         )
         mode, self._shown_until = _latch_mode(
             self._shown_mode, self._shown_until, mode, float(nxt.t)
@@ -1193,6 +1332,48 @@ class InteractiveSim:
         self.state = nxt
         self.tick += 1
         return frame, launch
+
+    def _yielding(self, state: VehicleState) -> bool:
+        for agent in self.dynamics:
+            pose = sample_dynamic_pose(agent, state.t, use_prediction=False)
+            if pose is not None and math.hypot(pose[0] - state.x, pose[1] - state.z) < YIELD_RADIUS_M:
+                return True
+        return False
+
+    def _update_recovery(self, nxt: VehicleState) -> None:
+        """Start a reverse after a stall, and hand back to the planner once stopped."""
+        if self.recovery is not None:
+            if self.recovery.done(nxt):
+                self.recovery = None
+                self._stuck_anchor = None
+                self.replan_hold_s = 0.0
+                # No tracker forces an immediate plan from the new pose.
+                self.tracker = None
+                self._recovery_replan = True
+            return
+        active = (
+            self.goal is not None
+            and not self.metrics.goal_reached
+            and not self.arriving
+        )
+        if not active:
+            self._stuck_anchor = None
+            return
+        if self._stuck_anchor is None:
+            self._stuck_anchor = (float(nxt.x), float(nxt.z), float(nxt.t))
+            return
+        ax, az, at = self._stuck_anchor
+        if math.hypot(nxt.x - ax, nxt.z - az) >= STUCK_MOVE_M:
+            self._stuck_anchor = (float(nxt.x), float(nxt.z), float(nxt.t))
+            return
+        if float(nxt.t) - at < STUCK_S or abs(nxt.speed) > 0.2:
+            return
+        if self._yielding(nxt):
+            return
+        self.recovery = ReverseRecovery(nxt, self.goal, self.params)
+        self.source = "fallback"
+        self.selected_path = []
+        self.fallback_path = []
 
     def step(self) -> dict:
         with self._lock:
