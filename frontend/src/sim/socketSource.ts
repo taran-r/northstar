@@ -5,6 +5,7 @@ export type SocketStatus = 'connecting' | 'open' | 'closed' | 'error';
 export type SocketSource = SimSource & {
   status: () => SocketStatus;
   onStatus: (fn: (status: SocketStatus) => void) => () => void;
+  onControl: (fn: (message: Record<string, unknown>) => void) => () => void;
   close: () => void;
 };
 
@@ -30,6 +31,7 @@ export const DEFAULT_WS_URL = 'ws://localhost:8000/ws';
 export function createSocketSource(url: string = DEFAULT_WS_URL): SocketSource {
   const listeners = new Set<(frame: StateFrame) => void>();
   const statusListeners = new Set<(status: SocketStatus) => void>();
+  const controlListeners = new Set<(message: Record<string, unknown>) => void>();
   const pending: Intent[] = [];
 
   let socket: WebSocket | null = null;
@@ -68,7 +70,10 @@ export function createSocketSource(url: string = DEFAULT_WS_URL): SocketSource {
         return;
       }
       const message = payload as { type?: string };
-      if (message.type !== 'state') return;
+      if (message.type !== 'state') {
+        controlListeners.forEach((fn) => fn(payload as Record<string, unknown>));
+        return;
+      }
       listeners.forEach((fn) => fn(payload as StateFrame));
     };
 
@@ -100,10 +105,15 @@ export function createSocketSource(url: string = DEFAULT_WS_URL): SocketSource {
       fn(status);
       return () => statusListeners.delete(fn);
     },
+    onControl(fn) {
+      controlListeners.add(fn);
+      return () => controlListeners.delete(fn);
+    },
     close() {
       closedByCaller = true;
       listeners.clear();
       statusListeners.clear();
+      controlListeners.clear();
       socket?.close();
       socket = null;
       setStatus('closed');

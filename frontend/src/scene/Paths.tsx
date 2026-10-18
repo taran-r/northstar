@@ -62,11 +62,13 @@ export const PathRibbons = memo(function PathRibbons({
         const opacity = spec.a ?? style.opacity;
 
         if (spec.k === 'fb') {
-          const even = resample(pts, 0.4);
+          const even = resample(pts, 0.5);
           return (
             <group key={i}>
-              {dashSegments(even, 3, 3).map((seg, j) => (
-                <Ribbon key={j} pts={seg} width={style.width} color={style.color} opacity={opacity} />
+              <Ribbon pts={pts} width={1.5} color="#F2EFE6" opacity={0.16} y={0.026} additive />
+              <Ribbon pts={pts} width={0.5} color={style.color} opacity={opacity} />
+              {dashSegments(even, 2.0, 1.2).map((seg, j) => (
+                <Ribbon key={j} pts={seg} width={0.16} color="#14171C" opacity={0.7} y={0.045} />
               ))}
             </group>
           );

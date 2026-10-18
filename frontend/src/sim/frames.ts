@@ -145,5 +145,8 @@ export function frameFor(input: FrameInput): StateFrame {
 }
 
 export const formatSigned = (v: number) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2);
-export const formatUnit = (v: number | null, digits = 2) =>
-  v == null ? '—' : v.toFixed(digits);
+export const formatUnit = (v: number | null, digits = 2) => {
+  if (v == null || Number.isNaN(v)) return '—';
+  const text = v.toFixed(digits);
+  return text.replace(/^-0(\.0+)?$/, '0$1');
+};

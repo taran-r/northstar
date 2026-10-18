@@ -23,6 +23,21 @@ export type ObstacleState = {
 
 export type PathPoint = { x: number; y: number; t?: number };
 
+/** One sampled curve from the flow-matching ODE, in the rover frame. */
+export type FlowCurve = {
+  t: number;
+  index: number;
+  selected: boolean;
+  points: { x: number; y: number }[];
+};
+
+/** Occupancy crops the encoder actually sees, max-pooled to `size` × `size`. */
+export type Conditioning = {
+  size: number;
+  facility: number[];
+  static: number[];
+};
+
 export type ControllerMode = 'tracking' | 'intervention' | 'estop' | 'replanning' | 'goal';
 
 export type ControllerState = {
@@ -59,6 +74,8 @@ export type StateFrame = {
   controller: ControllerState;
   metrics: RunMetrics;
   measured: boolean;
+  flow?: FlowCurve[];
+  conditioning?: Conditioning;
 };
 
 export type Intent =
@@ -67,6 +84,15 @@ export type Intent =
   | { type: 'spawn_obstacle'; kind: string; x: number; y: number; yaw: number }
   | { type: 'toggle_safety'; enabled: boolean }
   | { type: 'start' }
+  | { type: 'start_interactive'; seed?: number }
+  | {
+      type: 'start_hall';
+      seed?: number;
+      goal?: { x: number; y: number };
+      obstacles?: { kind: string; x: number; y: number; yaw?: number }[];
+    }
+  | { type: 'clear_obstacles' }
+  | { type: 'remove_obstacle'; id: string }
   | { type: 'pause' }
   | { type: 'resume' }
   | { type: 'step' }

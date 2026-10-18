@@ -12,6 +12,7 @@ import { MovingForklift } from './MovingForklift';
 import { CROSSING_FORKLIFT, type AgentPose } from './agents';
 import { LabelOverlay, LabelTracker, type WorldLabelSpec } from './LabelLayer';
 import { HALL } from './palette';
+import { FacilityHall, type FacilityGeometry } from './FacilityHall';
 import {
 
   DRIVE_TRACK,
@@ -64,12 +65,14 @@ function CameraRig({
   snap,
   tilt,
   pose,
+  focus,
 }: {
   mode: CameraMode;
   rover: { x: number; z: number };
   snap: boolean;
   tilt: number;
   pose?: React.RefObject<Pose> | null;
+  focus?: Pt | null;
 }) {
   const { camera, size } = useThree();
   const target = useRef(new THREE.Vector3());
@@ -87,9 +90,15 @@ function CameraRig({
       target.current.set(rx * 0.5, 6.4 - Math.sin(pitch) * 20, rz - 9.8 + Math.cos(pitch) * 20);
       fov = FOV(520);
     } else if (mode === 'course') {
-      want.current.set(...COURSE.pos);
-      target.current.set(...COURSE.target);
-      fov = COURSE.fov;
+      if (focus) {
+        want.current.set(focus.x + 6, 70, focus.z + 58);
+        target.current.set(focus.x, 0, focus.z);
+        fov = 42;
+      } else {
+        want.current.set(...COURSE.pos);
+        target.current.set(...COURSE.target);
+        fov = COURSE.fov;
+      }
     } else {
       const setup = setupCamera(tilt);
       want.current.set(...setup.pos);
@@ -209,6 +218,41 @@ function DriveAnimator({
   return null;
 }
 
+function DrivenRig({
+  target,
+  pose,
+  group,
+}: {
+  target: DrivenPose;
+  pose: React.RefObject<Pose>;
+  group: React.RefObject<THREE.Group | null>;
+}) {
+  const smooth = useRef({ x: target.x, z: target.z, yaw: target.yaw });
+  useFrame((_, dt) => {
+    const step = Math.min(dt, 0.1);
+    const jump = Math.hypot(target.x - smooth.current.x, target.z - smooth.current.z);
+    const k = jump > 6 ? 1 : 1 - Math.exp(-step / 0.09);
+    smooth.current.x += (target.x - smooth.current.x) * k;
+    smooth.current.z += (target.z - smooth.current.z) * k;
+    let delta = target.yaw - smooth.current.yaw;
+    while (delta > Math.PI) delta -= 2 * Math.PI;
+    while (delta < -Math.PI) delta += 2 * Math.PI;
+    smooth.current.yaw += delta * k;
+    pose.current = {
+      x: smooth.current.x,
+      z: smooth.current.z,
+      yaw: smooth.current.yaw,
+      travelled: 0,
+    };
+    const g = group.current;
+    if (g) {
+      g.position.set(smooth.current.x, 0, smooth.current.z);
+      g.rotation.y = smooth.current.yaw;
+    }
+  });
+  return null;
+}
+
 function DriveTrail({ track, pose }: { track: Track; pose: React.RefObject<Pose> }) {
   const [travelled, setTravelled] = useState(0);
   const last = useRef(0);
@@ -256,6 +300,8 @@ function DriveAttention({
   );
 }
 
+export type DrivenPose = { x: number; z: number; yaw: number };
+
 export type WorldProps = {
   state: WorldStateName;
   cameraMode: CameraMode;
@@ -265,6 +311,15 @@ export type WorldProps = {
   selected?: number;
   route?: Pt[] | null;
   candidates?: Pt[][];
+  fallback?: Pt[] | null;
+  trail?: Pt[] | null;
+  goalPoint?: Pt | null;
+  driven?: DrivenPose | null;
+  /** Live forklift poses from the bridge (placed patrols + hall crossing). */
+  agents?: DrivenPose[];
+  ring?: 'ok' | 'warn' | 'stop';
+  facility?: FacilityGeometry | null;
+  focus?: Pt | null;
   onFloorClick?: (p: Pt) => void;
   onPickObstacle?: (index: number) => void;
   onTick?: (p: number) => void;
@@ -289,6 +344,14 @@ function WorldCanvasImpl({
   selected = -1,
   route = null,
   candidates = [],
+  fallback = null,
+  trail = null,
+  goalPoint = null,
+  driven = null,
+  agents = [],
+  ring = 'ok',
+  facility = null,
+  focus = null,
   onFloorClick,
   onPickObstacle,
   onTick,
@@ -314,7 +377,8 @@ function WorldCanvasImpl({
     () => (!isSetup && route && route.length > 1 ? candidates : []),
     [isSetup, route, candidates],
   );
-  const driving = !!clock && state === 'hero';
+  const liveDrive = driven != null;
+  const driving = !!clock && state === 'hero' && !liveDrive;
   const pose = useRef<Pose>({
     x: track.pts[0].x,
     z: track.pts[0].z,
@@ -332,6 +396,21 @@ function WorldCanvasImpl({
   });
 
   const scene: WorldState = useMemo(() => {
+    if (liveDrive && driven) {
+      const paths: PathSpec[] = candidates.map((pts) => ({ k: 'cand', pts }));
+      if (route && route.length > 1) paths.push({ k: 'sel', pts: route });
+      if (fallback && fallback.length > 1) paths.push({ k: 'fb', pts: fallback });
+      const beacon = ring === 'stop' ? '#E5484D' : ring === 'warn' ? '#F2A33A' : '#5B8DEF';
+      return {
+        rov: { x: driven.x, z: driven.z, yaw: driven.yaw },
+        goal: goalPoint,
+        ring,
+        beacon,
+        fork: null,
+        speed: 0,
+        paths,
+      };
+    }
     if (isSetup) {
       return {
         rov: { x: -1.5, z: 8, yaw: 0 },
@@ -362,7 +441,20 @@ function WorldCanvasImpl({
       return { ...base, rov: { x: start.x, z: start.z, yaw: 0 }, goal, paths };
     }
     return base;
-  }, [isSetup, base, driving, track, courseCandidates, route, candidates]);
+  }, [
+    isSetup,
+    base,
+    driving,
+    track,
+    courseCandidates,
+    route,
+    candidates,
+    liveDrive,
+    driven,
+    fallback,
+    goalPoint,
+    ring,
+  ]);
 
   const rover = scene.rov;
   const start: Pt = { x: rover.x, z: rover.z };
@@ -449,7 +541,8 @@ function WorldCanvasImpl({
         rover={rover}
         snap={false}
         tilt={tilt}
-        pose={driving ? pose : null}
+        pose={driving || liveDrive ? pose : null}
+        focus={focus}
       />
       {driving && clock && (
         <DriveAnimator
@@ -460,6 +553,9 @@ function WorldCanvasImpl({
           onTick={onTick}
         />
       )}
+      {liveDrive && driven && (
+        <DrivenRig target={driven} pose={pose} group={roverGroup} />
+      )}
       {cameraMode === 'free' && (
         <OrbitControls
           target={[rover.x, 1, rover.z + 8]}
@@ -468,9 +564,13 @@ function WorldCanvasImpl({
         />
       )}
 
-      <Hall detail={level} />
+      {facility ? (
+        <FacilityHall facility={facility} onFloorClick={onFloorClick} />
+      ) : (
+        <Hall detail={level} />
+      )}
 
-      {onFloorClick && (
+      {onFloorClick && !facility && (
         <mesh
           position={[0, 0, HALL.ZE / 2]}
           rotation={[-Math.PI / 2, 0, 0]}
@@ -489,13 +589,19 @@ function WorldCanvasImpl({
           onPick={onPickObstacle}
           clock={clock}
           rover={driving ? pose : null}
-          animate={!isSetup}
+          animate={!isSetup && !liveDrive}
           runId={runId}
         />
       )}
 
       <PathRibbons paths={scene.paths} start={start} goal={scene.goal} />
-      {driving ? <DriveTrail track={track} pose={pose} /> : <WheelTrail pts={staticTrail} />}
+      {liveDrive ? (
+        <WheelTrail pts={trail && trail.length > 1 ? trail : []} />
+      ) : driving ? (
+        <DriveTrail track={track} pose={pose} />
+      ) : (
+        <WheelTrail pts={staticTrail} />
+      )}
 
       {attention && scene.goal && driving && (
         <DriveAttention
@@ -516,7 +622,7 @@ function WorldCanvasImpl({
       )}
       {scene.hazard && <HazardBand {...scene.hazard} />}
 
-      {!driving && (
+      {!driving && !liveDrive && (
         <SafetyRing position={[rover.x, 0.03, rover.z]} state={scene.ring} radius={ringRadius} />
       )}
       {scene.goal && (
@@ -530,7 +636,7 @@ function WorldCanvasImpl({
 
       <LabelTracker labels={worldLabels} nodes={labelNodes.current} />
 
-      {driving ? (
+      {driving || liveDrive ? (
         <group ref={roverGroup}>
           <Rover
             x={0}
@@ -550,7 +656,17 @@ function WorldCanvasImpl({
           scale={isSetup ? 2.6 : cameraMode === 'course' ? 3.2 : 1.5}
         />
       )}
-      {driving ? (
+      {liveDrive &&
+        agents.map((pose, i) => (
+          <Forklift
+            key={`live-fork-${i}`}
+            x={pose.x}
+            z={pose.z}
+            yaw={pose.yaw}
+            scale={cameraMode === 'chase' || cameraMode === 'free' ? 1.1 : 1.8}
+          />
+        ))}
+      {liveDrive ? null : driving ? (
         hasPlacedForklift ? null : (
           <MovingForklift
             key={runId}

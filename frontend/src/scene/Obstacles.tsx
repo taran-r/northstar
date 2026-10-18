@@ -6,7 +6,16 @@ import { patrolFor } from './agents';
 import type { Pose } from './WorldCanvas';
 import type { SimClock } from '../hooks/useSimClock';
 
-export type Obstacle = { t: string; x: number; z: number; yaw?: number };
+export type Obstacle = {
+  t: string;
+  x: number;
+  z: number;
+  yaw?: number;
+  id?: string;
+  length?: number;
+  width?: number;
+  height?: number;
+};
 
 type Part = { pos: [number, number, number]; size: [number, number, number]; color: string };
 
@@ -42,6 +51,34 @@ const BARRIER: Part[] = [
 ];
 
 const SHAPES: Record<string, Part[]> = { pallet: PALLET, crates: CRATES, barrier: BARRIER };
+
+const MEASURED_COLOR: Record<string, string> = {
+  pallet: MAT.wood,
+  crates: MAT.crate,
+  barrier: MAT.guard,
+  forklift: MAT.fork,
+};
+
+function MeasuredBody({ item }: { item: Obstacle }) {
+  const length = item.length ?? 1;
+  const width = item.width ?? 1;
+  const height = item.height ?? 1;
+  const color = MEASURED_COLOR[item.t] ?? MAT.steel;
+  return (
+    <group position={[item.x, 0, item.z]} rotation={[0, item.yaw ?? 0, 0]}>
+      <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[width, height, length]} />
+        <meshStandardMaterial color={color} roughness={0.72} metalness={0.08} />
+      </mesh>
+      {item.t === 'forklift' && (
+        <mesh position={[0, height + 0.08, 0]}>
+          <boxGeometry args={[0.12, 0.12, 0.12]} />
+          <meshStandardMaterial color="#F2A33A" emissive="#F2A33A" emissiveIntensity={1.4} />
+        </mesh>
+      )}
+    </group>
+  );
+}
 
 function SelectionRing({ x, z, r }: { x: number; z: number; r: number }) {
   return (
@@ -84,10 +121,20 @@ export const Obstacles = memo(function Obstacles({
     <group>
       {items.map((o, i) => {
         const yaw = o.yaw ?? 0;
-        const r = OBSTACLE_R[o.t] ?? 1.5;
+        const r = o.length ? Math.max(o.length, o.width ?? 1) * 0.65 : (OBSTACLE_R[o.t] ?? 1.5);
+        const measured = o.length != null && o.width != null;
         return (
-          <Fragment key={i}>
-            {o.t === 'forklift' ? (
+          <Fragment key={o.id ?? i}>
+            {measured ? (
+              <group
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPick?.(i);
+                }}
+              >
+                <MeasuredBody item={o} />
+              </group>
+            ) : o.t === 'forklift' ? (
               <group
                 onClick={(e) => {
                   e.stopPropagation();

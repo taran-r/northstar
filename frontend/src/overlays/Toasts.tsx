@@ -58,7 +58,7 @@ export function InterventionToast({
           <span className="lbl text-bone">Safety filter · corrected</span>
         </div>
         <span className="text-[11px] text-[rgba(232,230,225,0.66)]">
-          {controller.latency_ms == null ? '—' : `${controller.latency_ms} ms`}
+          {controller.latency_ms == null ? '—' : `${Math.round(controller.latency_ms)} ms`}
         </span>
       </div>
       <div
@@ -84,7 +84,15 @@ export function InterventionToast({
   );
 }
 
-export function StopToast({ top, clearance }: { top: number; clearance: number | null }) {
+export function StopToast({
+  top,
+  clearance,
+  measured = false,
+}: {
+  top: number;
+  clearance: number | null;
+  measured?: boolean;
+}) {
   return (
     <Toast top={top} ring="rgba(229,72,77,0.45)" className="flex items-center gap-4">
       <div className="flex flex-none flex-col items-start">
@@ -98,21 +106,38 @@ export function StopToast({ top, clearance }: { top: number; clearance: number |
       </div>
       <div className="h-[38px] w-px bg-[rgba(232,230,225,0.12)]" />
       <div className="flex flex-col gap-0.5">
-        <span className="text-[14px] font-medium text-bone">Stopped for crossing forklift</span>
+        <span className="text-[14px] font-medium text-bone">
+          {measured ? 'Emergency stop' : 'Stopped for crossing forklift'}
+        </span>
         <span className="text-[12px] text-[rgba(232,230,225,0.66)]">
-          Holding position while the planner finds a route
+          {measured
+            ? 'The filter could not correct the command locally'
+            : 'Holding position while the planner finds a route'}
         </span>
       </div>
     </Toast>
   );
 }
 
-export function ReplanToast({ top }: { top: number }) {
+export function ReplanToast({
+  top,
+  latencyMs,
+  measured = false,
+}: {
+  top: number;
+  latencyMs?: number | null;
+  measured?: boolean;
+}) {
+  const timing = measured
+    ? latencyMs == null
+      ? '—'
+      : `${Math.round(latencyMs)} ms`
+    : '38 ms';
   return (
     <Toast top={top} className="flex flex-col gap-2.5">
       <div className="flex items-center justify-between">
         <span className="text-[14px] font-medium text-bone">New route around the obstruction</span>
-        <span className="text-[11px] text-[rgba(232,230,225,0.66)]">38 ms</span>
+        <span className="text-[11px] text-[rgba(232,230,225,0.66)]">{timing}</span>
       </div>
       <div className="flex h-[18px] items-center gap-[18px]">
         <div className="flex items-center gap-2">
@@ -127,6 +152,19 @@ export function ReplanToast({ top }: { top: number }) {
           <span className="block h-0 w-5 border-t-2 border-dashed border-[#DCD8CE]" />
           <span className="text-[12px] text-[rgba(232,230,225,0.85)]">Fallback</span>
         </div>
+      </div>
+    </Toast>
+  );
+}
+
+export function DestinationToast({ top }: { top: number }) {
+  return (
+    <Toast top={top} ring="rgba(76,175,125,0.45)">
+      <div className="flex flex-col gap-0.5">
+        <span className="text-[14px] font-medium text-bone">Destination reached</span>
+        <span className="text-[12px] text-[rgba(232,230,225,0.66)]">
+          Returning to course setup
+        </span>
       </div>
     </Toast>
   );

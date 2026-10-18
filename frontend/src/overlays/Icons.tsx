@@ -44,13 +44,35 @@ export function ReplayIcon({ size = 20 }: IconProps) {
 }
 
 export function NetworkIcon({ size = 20 }: IconProps) {
+  // Three thin layers — reads as a net, not the OS "share" glyph.
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" {...stroke} aria-hidden="true">
-      <circle cx="5" cy="6" r="2" />
-      <circle cx="5" cy="18" r="2" />
-      <circle cx="19" cy="12" r="2" />
-      <path d="M7 6.6l10 4.8" />
-      <path d="M7 17.4l10-4.8" />
+      <circle cx="5" cy="7" r="1.6" />
+      <circle cx="5" cy="17" r="1.6" />
+      <circle cx="12" cy="5" r="1.6" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="12" cy="19" r="1.6" />
+      <circle cx="19" cy="9" r="1.6" />
+      <circle cx="19" cy="15" r="1.6" />
+      <path d="M6.5 7.4L10.4 5.6" />
+      <path d="M6.5 8.2L10.4 11.2" />
+      <path d="M6.5 16.2L10.4 12.8" />
+      <path d="M6.5 17.4L10.4 18.4" />
+      <path d="M13.6 5.8L17.4 8.4" />
+      <path d="M13.6 12L17.4 9.6" />
+      <path d="M13.6 12.8L17.4 14.4" />
+      <path d="M13.6 18.2L17.4 15.6" />
+    </svg>
+  );
+}
+
+export function BarrierIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" {...stroke} aria-hidden="true">
+      <path d="M5 19V8.2L12 4.5l7 3.7V19" />
+      <path d="M9 19v-6h6v6" />
+      <path d="M9.5 10.5h5" />
+      <path d="M9.5 13.5h5" />
     </svg>
   );
 }

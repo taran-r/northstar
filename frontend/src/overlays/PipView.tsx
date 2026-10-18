@@ -1,4 +1,4 @@
-import { WorldCanvas, type CameraMode } from '../scene/WorldCanvas';
+import { WorldCanvas, type CameraMode, type DrivenPose } from '../scene/WorldCanvas';
 import type { Obstacle } from '../scene/Obstacles';
 import type { Pt } from '../scene/math';
 import type { WorldStateName } from '../scene/scenes';
@@ -14,6 +14,12 @@ export function PipView({
   obstacles,
   route,
   candidates,
+  fallback,
+  trail,
+  goalPoint,
+  driven,
+  agents,
+  ring,
   onSwap,
 }: {
   state: WorldStateName;
@@ -24,6 +30,12 @@ export function PipView({
   obstacles?: Obstacle[];
   route?: Pt[] | null;
   candidates?: Pt[][];
+  fallback?: Pt[] | null;
+  trail?: Pt[] | null;
+  goalPoint?: Pt | null;
+  driven?: DrivenPose | null;
+  agents?: DrivenPose[];
+  ring?: 'ok' | 'warn' | 'stop';
   onSwap: () => void;
 }) {
   return (
@@ -40,10 +52,14 @@ export function PipView({
         obstacles={obstacles}
         route={route}
         candidates={candidates}
-        detail="lo"
+        fallback={fallback}
+        trail={trail}
+        goalPoint={goalPoint}
+        driven={driven}
+        agents={agents}
+        ring={ring}
+        detail="hi"
         labels={false}
-        pixelRatio={0.5}
-        fps={12}
       />
       <div className="glass absolute left-2.5 top-2.5 flex h-5 items-center rounded-[10px] px-2.5">
         <span className="lbl text-[9.5px] text-bone">{label}</span>

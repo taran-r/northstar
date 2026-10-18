@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   toBackend,
   toBackendHeading,
+  toBackendMeshHeading,
   toScene,
   toSceneGround,
   toScenePath,
+  toSceneMeshYaw,
   toSceneRover,
   toSceneYaw,
 } from './coords';
@@ -30,6 +32,16 @@ describe('backend to scene coordinates', () => {
   it('negates heading for the flipped ground axis', () => {
     expect(toSceneYaw(Math.PI / 2)).toBeCloseTo(-Math.PI / 2);
     expect(toBackendHeading(toSceneYaw(0.63))).toBeCloseTo(0.63);
+  });
+
+  it('points a +Z nose along the backend heading', () => {
+    expect(toSceneMeshYaw(0)).toBeCloseTo(Math.PI / 2);
+    expect(toSceneMeshYaw(Math.PI / 2)).toBeCloseTo(Math.PI);
+  });
+
+  it('round-trips a forklift scene yaw through the mesh heading', () => {
+    expect(toSceneMeshYaw(toBackendMeshHeading(0))).toBeCloseTo(0);
+    expect(toSceneMeshYaw(toBackendMeshHeading(Math.PI / 2))).toBeCloseTo(Math.PI / 2);
   });
 
   it('converts ground points and paths', () => {

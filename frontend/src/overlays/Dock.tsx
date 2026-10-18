@@ -29,6 +29,9 @@ export type DockProps = {
   onCycleQuality: () => void;
   speed: string;
   progress: number;
+  showCompare?: boolean;
+  safetyLocked?: boolean;
+  cbfMode?: 'tracking' | 'intervention' | 'estop' | 'replanning' | 'goal';
 };
 
 function Transport({ playing, onTogglePlay, onStep }: Pick<DockProps, 'playing' | 'onTogglePlay' | 'onStep'>) {
@@ -47,6 +50,34 @@ function Transport({ playing, onTogglePlay, onStep }: Pick<DockProps, 'playing' 
       </button>
     </>
   );
+}
+
+function SafetyStatus({ mode }: { mode: NonNullable<DockProps['cbfMode']> }) {
+  const detail =
+    mode === 'intervention'
+      ? 'Correcting'
+      : mode === 'estop'
+        ? 'Stop'
+        : mode === 'replanning'
+          ? 'Replan'
+          : mode === 'goal'
+            ? 'Holding'
+            : 'Watching';
+  return (
+    <div
+      className="tgl"
+      title="Control barrier filter. It edits steering and braking when the commanded motion would close on an obstacle. It stays on for this run."
+    >
+      <ShieldIcon />
+      <span>CBF filter</span>
+      <span className="text-[12px] text-amber">{detail}</span>
+    </div>
+  );
+}
+
+function SafetyControl(props: DockProps) {
+  if (props.safetyLocked) return <SafetyStatus mode={props.cbfMode ?? 'tracking'} />;
+  return <SafetyToggle {...props} />;
 }
 
 function SafetyToggle({ safety, onToggleSafety }: Pick<DockProps, 'safety' | 'onToggleSafety'>) {
@@ -94,12 +125,14 @@ function ViewButtons({
   onCompare,
   networkOpen,
   onToggleNetwork,
-}: Pick<DockProps, 'onReplay' | 'onCompare' | 'networkOpen' | 'onToggleNetwork'>) {
+  showCompare = true,
+}: Pick<DockProps, 'onReplay' | 'onCompare' | 'networkOpen' | 'onToggleNetwork' | 'showCompare'>) {
   return (
     <>
       <button className="ibtn" aria-label="Restart run" title="Restart run" onClick={onReplay}>
         <ReplayIcon />
       </button>
+      {showCompare && (
       <button
         className="ibtn"
         aria-label="Compare safety on and off"
@@ -108,10 +141,12 @@ function ViewButtons({
       >
         <CompareIcon />
       </button>
+      )}
       <button
         className={`ibtn ${networkOpen ? 'on' : ''}`}
         aria-label="Neural network view"
         aria-pressed={networkOpen}
+        title="Flow-matching network view"
         onClick={onToggleNetwork}
       >
         <NetworkIcon />
@@ -163,7 +198,7 @@ export function Dock(props: DockProps) {
           <ViewButtons {...props} />
         </div>
         <span className="hairline" />
-        <SafetyToggle {...props} />
+        <SafetyControl {...props} />
         <div className="flex-1" />
         <CameraSeg {...props} />
         <span className="hairline" />
@@ -178,7 +213,7 @@ export function Dock(props: DockProps) {
         <div className="glass absolute bottom-7 left-7 flex h-14 items-center gap-2 rounded-[18px] px-3">
           <Transport {...props} />
           <span className="hairline" />
-          <SafetyToggle {...props} />
+          <SafetyControl {...props} />
           <span className="hairline" />
           <ViewButtons {...props} />
         </div>
@@ -215,7 +250,7 @@ export function Dock(props: DockProps) {
           <Transport {...props} />
         </div>
         <span className="hairline" />
-        <SafetyToggle {...props} />
+        <SafetyControl {...props} />
         <span className="hairline" />
         <div className="flex items-center">
           <ViewButtons {...props} />

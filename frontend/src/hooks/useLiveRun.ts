@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Obstacle } from '../scene/Obstacles';
 import type { Pt } from '../scene/math';
-import { toSceneGround, toScenePath, toSceneRover } from '../scene/coords';
+import { toSceneGround, toSceneMeshYaw, toScenePath, toSceneRover } from '../scene/coords';
 import { createSocketSource, DEFAULT_WS_URL } from '../sim/socketSource';
 import type { SocketSource, SocketStatus } from '../sim/socketSource';
 import type { Intent, StateFrame } from '../types/sim';
@@ -15,6 +15,7 @@ export type LiveRun = {
   route: Pt[] | null;
   candidates: Pt[][];
   obstacles: Obstacle[] | null;
+  notice: string | null;
   send: (intent: Intent) => void;
 };
 
@@ -42,6 +43,7 @@ export function useLiveRun(options?: { url?: string; enabled?: boolean }): LiveR
   const [status, setStatus] = useState<SocketStatus>('closed');
   const [frame, setFrame] = useState<StateFrame | null>(null);
   const sourceRef = useRef<SocketSource | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (!enabled) {
@@ -52,9 +54,25 @@ export function useLiveRun(options?: { url?: string; enabled?: boolean }): LiveR
     sourceRef.current = source;
     const offFrame = source.subscribe(setFrame);
     const offStatus = source.onStatus(setStatus);
+    const offControl = source.onControl((message) => {
+      if (message.type !== 'ack') return;
+      if (message.accepted === false) {
+        const intent = String(message.intent ?? 'command');
+        setNotice(
+          intent === 'set_goal'
+            ? 'That point is inside geometry.'
+            : intent === 'spawn_obstacle'
+              ? 'That spot is blocked.'
+              : null,
+        );
+      } else if (message.intent === 'set_goal' || message.intent === 'spawn_obstacle') {
+        setNotice(null);
+      }
+    });
     return () => {
       offFrame();
       offStatus();
+      offControl();
       source.close();
       sourceRef.current = null;
     };
@@ -83,10 +101,14 @@ export function useLiveRun(options?: { url?: string; enabled?: boolean }): LiveR
     return frame.obstacles.map((o): Obstacle => {
       const ground = toSceneGround(o.position[0], o.position[1]);
       return {
+        id: o.id,
         t: OBSTACLE_KIND[o.kind ?? ''] ?? (o.shape === 'cylinder' ? 'column' : 'crate'),
         x: ground.x,
         z: ground.z,
-        yaw: o.yaw,
+        yaw: toSceneMeshYaw(o.yaw ?? 0),
+        length: o.size[0],
+        width: o.size[1],
+        height: o.size[2],
       };
     });
   }, [frame]);
@@ -105,6 +127,7 @@ export function useLiveRun(options?: { url?: string; enabled?: boolean }): LiveR
     route,
     candidates,
     obstacles,
+    notice,
     send,
   };
 }
