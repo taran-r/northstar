@@ -86,8 +86,8 @@ Quality (High / Balanced / Fast) changes pixel ratio, shadows and rack detail.
 - `src/overlays/SceneSwitcher.tsx` is a review aid, not part of the design, and is hidden unless
   you load the page with `?states=1`. It steps through the design's canned HUD states; once the
   simulator is connected those come from `controller.mode` on each frame instead.
-- `src/branding.ts` holds the wordmark. `CLAUDE.md` says the project name is undecided; set
-  `SHOW_WORDMARK` to `false` or change `APP_NAME` in one place.
+- `src/branding.ts` holds the wordmark: `APP_NAME` is `Northstar` and `SHOW_WORDMARK` is on.
+  Change either in that one place.
 - The canned scenes (intervention, emergency stop, replanning) stage their own forklift, which can
   overlap obstacles you placed in setup. They are demo states; they disappear once the simulator
   drives the run.

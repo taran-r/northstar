@@ -1,6 +1,6 @@
 # Project Handoff — 3D Autonomous Ground-Robot Planning and Safety
 
-> **Project name:** Deliberately undecided. Do not invent, infer, or brand the project with a name until the team chooses one.
+> **Project name:** Northstar. The team chose it; use it rather than inventing an alternative.
 >
 > **Status:** Concept committed; architecture and implementation details below are a proposed execution plan, not claims of completed work.
 >
@@ -550,7 +550,7 @@ Potential educational/visual ablation: show early untrained trajectory samples, 
 ## 18. Instructions for Claude / future coding agents
 
 1. **Read this handoff as a design brief, not a completed implementation.** Check the actual repository state before assuming any file, component, dataset, or model already exists.
-2. Do not rename the project. Treat the name as undecided and avoid branding.
+2. Do not rename the project. It is called Northstar.
 3. Do not substitute a drone, 2D-only dot navigator, graph-search animation, or an AI wrapper for the described project.
 4. Keep the primary ML technique **conditional flow matching** unless explicitly instructed to change it. The user chose this direction because of its modern generative ML plus mathematical safety combination.
 5. Be rigorous about whether the neural network **actually** predicts route candidates versus whether a classical planner is generating them at inference.

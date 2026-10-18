@@ -10,7 +10,8 @@ Not a drone, not 2D pathfinding, not A* with an AI wrapper.
 
 ## Ground rules
 
-- **Project name is undecided.** Don't invent or add a name or branding in code, UI, docs, or slides.
+- **The project is called Northstar.** Use that name in code, UI, docs, and slides. The display
+  wordmark lives in one place, `frontend/src/branding.ts`.
 - Keep flow matching as the core ML technique. A classical planner (Hybrid A*) is the baseline and the logged fallback, never presented as the learned result.
 - The CBF must be derived for the real dynamics (mind relative degree). A plain `distance < threshold -> brake` is only an emergency fallback, not "CBF". Call it "CBF-style" or "discrete-time CBF filter" and make no guarantee claims.
 - Metrics come from measured runs only. No placeholder numbers.
