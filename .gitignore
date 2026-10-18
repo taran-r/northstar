@@ -8,11 +8,10 @@ __pycache__/
 *$py.class
 *.egg-info/
 .eggs/
-dist/
-build/
 *.egg
+build/
+dist/
 .venv/
-.venv_audit/
 venv/
 .env
 .env.*
@@ -33,3 +32,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# ML checkpoints and sample cache (large binaries, regenerable)
+backend/artifacts/
