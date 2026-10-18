@@ -1,0 +1,255 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-void: #0b0c0f;
+  --color-charcoal: #14171c;
+  --color-steel: #1f252d;
+  --color-amber: #f2a33a;
+  --color-amber-hi: #f5b252;
+  --color-dusk: #5b8def;
+  --color-bone: #e8e6e1;
+  --color-alert: #e5484d;
+  --color-go: #4caf7d;
+
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
+
+  body {
+    margin: 0;
+    background: #06070a;
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(20, 23, 28, 0.62);
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    backdrop-filter: blur(18px) saturate(1.15);
+    box-shadow:
+      0 0 0 1px rgba(232, 230, 225, 0.07) inset,
+      0 12px 32px rgba(0, 0, 0, 0.28);
+  }
+
+  .lbl {
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(232, 230, 225, 0.66);
+    font-weight: 500;
+  }
+
+  .hairline {
+    width: 1px;
+    height: 22px;
+    background: rgba(232, 230, 225, 0.12);
+    flex: none;
+  }
+
+  .ibtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 0;
+    background: transparent;
+    color: #e8e6e1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+  .ibtn:hover {
+    background: rgba(232, 230, 225, 0.08);
+  }
+  .ibtn.on {
+    background: rgba(242, 163, 58, 0.16);
+    color: #f2a33a;
+  }
+
+  .seg {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 12px;
+    background: rgba(232, 230, 225, 0.06);
+  }
+  .seg button {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 9px;
+    border: 0;
+    background: transparent;
+    color: rgba(232, 230, 225, 0.72);
+    font: 500 12px var(--font-sans);
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+  .seg button.on {
+    background: rgba(232, 230, 225, 0.14);
+    color: #e8e6e1;
+  }
+
+  .tgl {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 12px;
+    border: 0;
+    background: transparent;
+    color: #e8e6e1;
+    font: 500 12px var(--font-sans);
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+  .tgl:hover {
+    background: rgba(232, 230, 225, 0.08);
+  }
+
+  .sw {
+    width: 30px;
+    height: 18px;
+    border-radius: 9px;
+    background: rgba(232, 230, 225, 0.18);
+    position: relative;
+    flex: none;
+  }
+  .sw.on {
+    background: #f2a33a;
+  }
+  .sw i {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    background: #14171c;
+    transition: left 120ms ease;
+  }
+  .sw.on i {
+    left: 14px;
+  }
+
+  .qual {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 12px;
+    border: 0;
+    background: transparent;
+    color: rgba(232, 230, 225, 0.72);
+    font: 500 12px var(--font-sans);
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+  .qual:hover {
+    background: rgba(232, 230, 225, 0.08);
+  }
+  .qual b {
+    color: #e8e6e1;
+    font-weight: 500;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 11px;
+    border: 0;
+    background: rgba(232, 230, 225, 0.08);
+    color: #e8e6e1;
+    font: 500 12px var(--font-sans);
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover {
+    background: rgba(232, 230, 225, 0.14);
+  }
+  .btn-amber {
+    background: rgba(242, 163, 58, 0.16);
+    color: #f2a33a;
+  }
+  .btn-amber:hover {
+    background: rgba(242, 163, 58, 0.24);
+  }
+
+  .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 18px 0 20px;
+    border-radius: 12px;
+    background: #f2a33a;
+    color: #14171c;
+    font: 600 13px var(--font-sans);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 0;
+  }
+  .go:hover {
+    background: #f5b252;
+  }
+}
+
+@layer utilities {
+  .pulse-dot {
+    animation: ns-pulse 2.6s ease-in-out infinite;
+  }
+  .blink-dot {
+    animation: ns-blink 1.3s ease-in-out infinite;
+  }
+  @keyframes ns-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @keyframes ns-blink {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-dot,
+    .blink-dot {
+      animation: none;
+    }
+  }
+}

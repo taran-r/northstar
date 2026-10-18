@@ -34,14 +34,22 @@ Not a drone, not 2D pathfinding, not A* with an AI wrapper.
 
 ## Commands
 
-```bash
-pip install -e .
-python -m pytest tests/test_dataset_loader.py -q
-# Data owner only (do not overwrite data/dataset_v1 from training work):
-# python scripts/generate_dataset.py --out data/dataset_v1 --min-windows 5000
-```
+Install: `pip install -r requirements.txt`.
 
-Training handoff: `docs/TRAINING_HANDOFF.md`. Dataset coords are XZ-horizontal (see `northstar/coords.py` for backend/Three.js mapping).
+Backend planner bridge (serves `StateFrame`s to the frontend):
+`python -m uvicorn backend.api.server:app --port 8000`
+
+Frontend: `cd frontend && npm install`, then `npm run dev` (http://localhost:5173).
+Add `?live=1` to stream real frames from the bridge; without the flag the screens use canned
+state, so the demo runs with no backend. Also `npm run build`, `npm run typecheck`, `npm run test`.
+
+Test: `python -m pytest tests/ -q`.
+
+Train: `python -m backend.ml.train --combined --no-include-oracle --heading-weight 2.0
+--speed-weight 0.3 --unit-weight 0.3 --out backend/artifacts/<name>.pt`
+
+Evaluate: `python -m backend.ml.evaluation <ckpt> --windows 150 --candidates 8 --steps 16`.
+Record frames for replay: `python -m backend.ml.bridge` (writes `backend/artifacts/frames/`).
 
 ## Working agreements
 
