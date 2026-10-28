@@ -8,9 +8,16 @@ import { LiveScreen } from './screens/LiveScreen';
 
 type Screen = 'setup' | 'run' | 'replay';
 
+function skipLanding() {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.has('demo') || params.has('nointro');
+}
+
 export function App() {
-  const [showSim, setShowSim] = useState(false);
-  const [showLanding, setShowLanding] = useState(true);
+  const skipIntro = skipLanding();
+  const [showSim, setShowSim] = useState(skipIntro);
+  const [showLanding, setShowLanding] = useState(!skipIntro);
 
   return (
     <>
