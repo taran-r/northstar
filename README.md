@@ -1,18 +1,50 @@
 # Northstar
 
-An autonomous industrial rover — a 3D ground-rover simulation in a shared facility. A conditional
-**flow-matching** network (PyTorch, trained from scratch) proposes timed trajectory candidates,
-a ranking step picks one, a **CBF-style discrete-time safety filter** certifies the command, and a
-kinematic-bicycle plant integrates it. A React Three Fiber frontend renders the resulting frames.
+Northstar is a 3D simulation of a small autonomous **ground rover** sharing an industrial hall with
+aisles, pallets, and other traffic. The rover proposes a timed path, picks one, and follows it
+without colliding. The backend handles physics and collisions, and a React Three Fiber frontend
+only draws the frames it is given.
 
-Hybrid A* is the baseline and the logged fallback, never presented as the learned result.
+The motion comes from a **conditional flow-matching** network trained from scratch in PyTorch.
+Given the rover's pose, nearby obstacles, and a goal, the network turns noise into several
+candidate paths, and ranking picks the best of them. Those paths are not automatically safe. A
+**control barrier function (CBF)** is a check that the next command would keep the rover out of
+an unsafe region, so Northstar filters acceleration and steering before they are applied, and
+falls back to an emergency stop if no safe command exists. The vehicle is a simple car-like model
+(kinematic bicycle) with speed and steer limits.
+
+Hybrid A* is the classical baseline and the logged fallback, and it is never presented as the
+learned result.
+
+## Research direction
+
+Generative models can draw several plausible motions from one scene, which is useful when a warehouse aisle has more than one way around a pallet or a moving forklift. [Flow matching](https://arxiv.org/abs/2210.02747) (Lipman et al., ICLR 2023) does that by learning a velocity field from noise to data, so a short ODE produces a sample instead of a long denoising chain. [FlowMP](https://arxiv.org/abs/2503.06135) (Nguyen et al., IROS 2025) showed the same idea can be a motion-planning prior for robots, including acceleration-aware trajectories.
+
+Those samples are not automatically safe. A flow-matching planner has no built-in collision certificate. [Control barrier functions](https://arxiv.org/abs/1903.07823) (Ames et al.) are the usual tool for that: a quadratic program nudges a command just enough to keep a barrier positive. [SafeFlowMatcher](https://arxiv.org/abs/2509.24243) (Yang, Jang, and Han, ICLR 2026) is the paper that puts the two together. They generate a path with flow matching, then correct it with a CBF quadratic program, and they prove a barrier certificate. The figures below are theirs.
+
+<p align="center">
+  <img src="docs/assets/safeflowmatcher-overview.png" alt="SafeFlowMatcher overview: generate a path, then apply CBF correction" width="720">
+</p>
+<p align="center"><em>Overview from Yang, Jang, and Han, SafeFlowMatcher (ICLR 2026). Constraining every intermediate sample during generation can trap a path. Their method generates first, then certifies. Reused under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> from the <a href="https://takahashi-seiryu.github.io/SafeFlowMatcher/">project page</a>. Resized only. See <a href="docs/assets/ATTRIBUTION.md">ATTRIBUTION.md</a>.</em></p>
+
+<p align="center">
+  <img src="docs/assets/safeflowmatcher-generation.png" alt="Maze2D generation process: SafeDiffuser vs SafeFlowMatcher" width="880">
+</p>
+<p align="center"><em>Path generation in Maze2D, same source. Top: a diffusion safety method starts from noise everywhere and can trap. Bottom: SafeFlowMatcher predicts near the target path, then corrects. Reused under CC BY 4.0.</em></p>
+
+Northstar takes that pairing into an industrial ground rover. A self-trained conditional flow-matching net proposes timed bicycle windows. Best-of-eight ranking picks a polyline. A discrete-time CBF-style filter then acts on the executed command `(accel, steer)`, not on the flow that produced the path. Hybrid A* remains the expert and the logged fallback. We do not implement SafeFlowMatcher's prediction-correction integrator and we do not inherit their certificate. IEEE holds the copyright on FlowMP figures, so none are reproduced here.
+
+<p align="center">
+  <img src="docs/assets/app-run.png" alt="Northstar run screen: rover tracking a path through the industrial hall" width="880">
+</p>
+<p align="center"><em>The Northstar frontend during a run: the rover tracks a selected trajectory in <code>industrial_facility_v1</code>, with the safety filter on.</em></p>
 
 ## State of the project
 
 The full pipeline runs end to end: **model proposes → ranking selects → CBF filter certifies →
 bicycle plant integrates → frames reach the frontend**. Flow-matching training converges.
 
-The model alone is **not drivable** — a single candidate collides 47–61% of the time. The system
+The model alone is **not drivable**. A single candidate collides 47-61% of the time. The system
 is usable because best-of-8 ranking plus the safety filter cover it, which is the architecture's
 point. Numbers below come from measured runs; method and caveats are in
 [`docs/ML_SESSION_STATE.md`](docs/ML_SESSION_STATE.md) and [`docs/CBF_SAFETY.md`](docs/CBF_SAFETY.md).
@@ -27,11 +59,16 @@ point. Numbers below come from measured runs; method and caveats are in
 | Path efficiency (arrivals only) | 0.92 | 0.98 |
 | Fallback replans | 67% | 50% |
 | Plan latency | 45 ms | 82 ms |
-| CBF solve | — | 280 ms |
+| CBF solve | n/a | 280 ms |
 
 The filter removes every collision without costing a goal arrival. Fallback rate is *lower* with
 the filter on, because it keeps the rover in states the planner can still solve from. Goal arrival
 at 4/12 is a planner limitation, not a safety cost.
+
+<p align="center">
+  <img src="docs/assets/app-replay.png" alt="Replay comparison of safety filter off versus on" width="880">
+</p>
+<p align="center"><em>Replay view in the app: the same course with the filter off (left) and on (right). The table is the closed-loop measurement above.</em></p>
 
 ### Best-of-8 candidate availability
 
@@ -50,7 +87,7 @@ The whole difference between a single sample and a usable plan is the ranking st
 |---|---|---|---|---|
 | Heading error mean, v2 | **24.73°** | 26.82° | 31.30° | 2.65° |
 | Collision rate, v2 | 0.468 | 0.487 | 0.493 | 0.000 |
-| Latency per candidate | **3.8 ms** | 8.0 ms | 8.5 ms | — |
+| Latency per candidate | **3.8 ms** | 8.0 ms | 8.5 ms | n/a |
 
 `v2_static_control.pt` is the current best checkpoint and the default in `backend/api/server.py`.
 Dynamic conditioning measured as a null twice; static matches or beats it at half the latency.
@@ -80,8 +117,13 @@ cd frontend && npm install && npm run dev      # http://localhost:5173
 
 Without `?live=1` the frontend uses canned state, so the demo runs with no backend. Add `?live=1`
 to stream real frames. Prefer the **replay** path (`start_replay` intent) for a demo: the live
-path is real but streams ~2.8× slower than real time — 280 ms CBF solve against a 100 ms control
-interval on CPU.
+path is real but streams ~2.8× slower than real time (280 ms CBF solve against a 100 ms control
+interval on CPU). `?demo` skips the intro card and the backend check.
+
+<p align="center">
+  <img src="docs/assets/app-setup.png" alt="Northstar course setup: hall, obstacles, and route preview" width="880">
+</p>
+<p align="center"><em>Course setup in the app. Place pallets, barriers, and forklifts; the amber route is a preview, not the learned plan.</em></p>
 
 ### Train and evaluate
 
@@ -95,7 +137,7 @@ python -m backend.ml.bridge                 # record frame logs to backend/artif
 python scripts/eval_cbf_safety.py           # CBF scenario sweep -> docs/cbf_eval/
 ```
 
-Training is CPU-first (the team has AMD iGPUs) — about 35 s/epoch, early stopping at patience 25.
+Training is CPU-first (the team has AMD iGPUs), about 35 s/epoch, early stopping at patience 25.
 
 ### Regenerate the dataset
 
@@ -169,7 +211,7 @@ docs/                      Data pipeline, CBF safety, training handoff, session 
 
 | Module | Role |
 |--------|------|
-| `model.py` | Flow-matching net — 7-feature target, 16-feature condition, 256 wide / 3 blocks |
+| `model.py` | Flow-matching net: 7-feature target, 16-feature condition, 256 wide / 3 blocks |
 | `dataset.py` | Combined train dataset (refuses val/test by design) + feature construction |
 | `train.py` | Flow matching plus physical auxiliary losses |
 | `inference.py` | `plan()` → `rank_candidates()` → `best_candidate()` |
@@ -189,13 +231,13 @@ rover-frame, and without it the model cannot align the map to the path it predic
 plus 3.9× more data, cut mean heading error 42.9° → 22.8°.
 
 1,057,232 params static, 1,156,096 with dynamic conditioning. Reducing capacity is measured as
-harmful — the smaller models underfit, and `--hidden-dim` never touches the condition encoder,
+harmful. The smaller models underfit, and `--hidden-dim` never touches the condition encoder,
 which is a fixed ~348k floor.
 
 ## Safety filter
 
 The decision variable is `u = (accel, steer_cmd)`. Clearance on the bicycle has **relative degree
-2**, so a plain `distance < threshold → brake` is not a CBF — that is only the emergency fallback.
+2**, so a plain `distance < threshold → brake` is not a CBF. That is only the emergency fallback.
 The filter certifies a command by rolling the discrete plant forward through the commitment step,
 a 0.7 s preview, a maximum-braking backup, and a 1.5 s idle hold so a predicted moving obstacle
 can sweep the stopping point. No formal guarantee is claimed.
@@ -212,7 +254,7 @@ Scenario sweep, same pure-pursuit tracker both ways:
 | open floor | 0 / 0 | none | 0.02 ms |
 
 The unavoidable wall is already inside the braking distance on arrival; both runs collide and the
-filter does not claim otherwise — it reduces impact speed from 2.4 to 1.9 m/s. Full assumptions
+filter does not claim otherwise. It reduces impact speed from 2.4 to 1.9 m/s. Full assumptions
 and limits are in [`docs/CBF_SAFETY.md`](docs/CBF_SAFETY.md).
 
 ## Coordinates
@@ -224,7 +266,7 @@ Three frames, one conversion point each:
 - **Three.js**: Y-up, `(x, y, z)_backend → (x, z, −y)_frontend`.
 
 `northstar/coords.py` is the only place these map, and `frontend/src/scene/coords.ts` is its
-frontend counterpart; both are tested. Convert at the boundary only — scene components work in
+frontend counterpart; both are tested. Convert at the boundary only. Scene components work in
 Three.js coordinates and never re-derive the mapping.
 
 ## Expert planner (the baseline)
@@ -259,9 +301,16 @@ Six of these cost real time; the full write-ups are in
 3. **Per-sample vs batch-mean ramps.** The auxiliary ramp was one batch scalar while the comment
    claimed per-sample fade-in; fixing it moved heading error 35.9° → 27.0°.
 4. **Chord-vs-arc curvature.** Measuring yaw change against the chord overestimates by
-   `1 + θ²/24` — enough to fail 61% of v2 expert trajectories, which drive at full steering lock.
+   `1 + θ²/24`, enough to fail 61% of v2 expert trajectories, which drive at full steering lock.
    Curvature at near-zero speed is also undefined, so mask the gate to moving steps.
 5. **Ranking must not reject on the model's raw kinematics.** Only the position polyline reaches
    the plant; rejecting on speed, steering and curvature drove the fallback rate from 24% to 76%.
    Collisions reject, the envelope sorts.
 6. **Flow loss and physical quality disagree.** Never rank checkpoints on loss alone.
+
+## References
+
+1. Y. Lipman, R. T. Q. Chen, H. Ben-Hamu, M. Nickel, and M. Le, "Flow Matching for Generative Modeling," ICLR 2023. https://arxiv.org/abs/2210.02747
+2. K. Nguyen, A. T. Le, T. Pham, M. Huber, J. Peters, and M. N. Vu, "FlowMP: Learning Motion Fields for Robot Planning with Conditional Flow Matching," IROS 2025. https://arxiv.org/abs/2503.06135
+3. J. Yang, S. Jang, and S. Han, "SafeFlowMatcher: Safe and Fast Planning using Flow Matching with Control Barrier Functions," ICLR 2026. https://arxiv.org/abs/2509.24243
+4. A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, "Control Barrier Functions: Theory and Applications," ECC 2019. https://arxiv.org/abs/1903.07823
